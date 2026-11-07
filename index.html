@@ -17,7 +17,7 @@
 /* ============ MESURE D'AUDIENCE (Google Apps Script) ============
    Remplace la valeur ci-dessous par l'URL de déploiement de ton script.
    Tant qu'elle n'est pas remplacée, l'app fonctionne, sans mesure. */
-const TRACK_URL = "https://script.google.com/macros/s/AKfycbxbDQO8sQ5p8Paf5bB9Ch4P-SXZpxHiyCTNmAShHGpZIOQ_Wy-DAQLej_1a4-hg4gRiCw/exec";
+const TRACK_URL = "https://script.google.com/macros/s/AKfycbyM5Eaz4lLDmbVEWX0GcjTTL1NtMWAm9NEw7c-Ifyg6MsdFco0TQ0Duuehc2-dZNSGErA/exec";
 
 /* Identifiant visiteur anonyme : généré une fois par navigateur, jamais une donnée personnelle. */
 function getUid() {
@@ -55,13 +55,14 @@ function getAppName() {
   } catch (err) { return "defaut"; }
 }
 
-function track(event, module) {
+function track(event, module, score) {
   if (!TRACK_URL || TRACK_URL.indexOf("COLLE_ICI") === 0) return;
   try {
     let u = TRACK_URL + "?e=" + encodeURIComponent(event) + "&u=" + encodeURIComponent(getUid())
           + "&d=" + encodeURIComponent(getDevice())
           + "&a=" + encodeURIComponent(getAppName());
     if (module) u += "&m=" + encodeURIComponent(module);
+    if (score !== undefined && score !== null) u += "&s=" + encodeURIComponent(score);
     if (document.referrer) u += "&r=" + encodeURIComponent(document.referrer);
     fetch(u, { mode: "no-cors" });
   } catch (err) {}
@@ -1420,7 +1421,10 @@ function App() {
     const vals = keys.map(k => scores[k] ?? 0);
     return Math.round(vals.reduce((a, b) => a + b, 0) / keys.length);
   }, [scores]);
-  const best = (k, v) => save(k, Math.max(v, scores[k] ?? 0));
+  const best = (k, v) => {
+    save(k, Math.max(v, scores[k] ?? 0));
+    track("score", k, v); // remontée anonyme du score de fin de module
+  };
   const go = k => {
     setView(k);
     if (k !== "home") track("module", k);
@@ -1493,6 +1497,6 @@ try {
   if (_fb2) _fb2.innerHTML = "<p style='font-weight:700;'>Erreur au démarrage de l'application.</p><pre style='white-space:pre-wrap;font-size:13px;color:#b00;'>" + String(err && err.message ? err.message : err) + "</pre>";
 }
 </script>
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" nonce="jZV2LVJ8XGQ9vabJwJmGaA==" data-cf-beacon='{"version":"2024.11.0","token":"36b4216ae2dc4d5488c249161e71fe1e","spa":2}' crossorigin="anonymous"></script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" nonce="ZPy7+uZsBcJyUdaUvkhtvw==" data-cf-beacon='{"version":"2024.11.0","token":"36b4216ae2dc4d5488c249161e71fe1e","spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
