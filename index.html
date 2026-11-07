@@ -17,7 +17,7 @@
 /* ============ MESURE D'AUDIENCE (Google Apps Script) ============
    Remplace la valeur ci-dessous par l'URL de déploiement de ton script.
    Tant qu'elle n'est pas remplacée, l'app fonctionne, sans mesure. */
-const TRACK_URL = "https://script.google.com/macros/s/AKfycbzrxgBjAlhUQQXX9esfRQ9VP9hXDXbM0drNxc06-D7TyfS3d15fFcjH-w9gILiaKFxMKQ/exec";
+const TRACK_URL = "https://script.google.com/macros/s/AKfycby71W20SPB9mh8JAuzRtm_UkNr8BrbvNrRCqZVSaO8Szv_qsgjNaaaJl0pTeyMrNcO_Uw/exec";
 
 /* Identifiant visiteur anonyme : généré une fois par navigateur, jamais une donnée personnelle. */
 function getUid() {
@@ -31,10 +31,36 @@ function getUid() {
   } catch (err) { return "anonyme"; }
 }
 
+/* Type d'appareil : lu depuis le "user agent" du navigateur (type · OS · navigateur). */
+function getDevice() {
+  const ua = navigator.userAgent || "";
+  const isTablet = /iPad|Tablet|Nexus (?:7|9|10)/i.test(ua) || (/Android/i.test(ua) && !/Mobile/i.test(ua));
+  const isPhone = /iPhone|iPod|Windows Phone/i.test(ua) || (/Android/i.test(ua) && /Mobile/i.test(ua));
+  const os = /iPhone|iPod|iPad/i.test(ua) ? "iOS" : /Android/i.test(ua) ? "Android" : /Windows/i.test(ua) ? "Windows" : /Mac/i.test(ua) ? "macOS" : /Linux/i.test(ua) ? "Linux" : "OS ?";
+  const browser = /Edg\//i.test(ua) ? "Edge" : /OPR|Opera/i.test(ua) ? "Opera" : /Firefox/i.test(ua) ? "Firefox" : /Chrome/i.test(ua) ? "Chrome" : /Safari/i.test(ua) ? "Safari" : "navigateur ?";
+  const type = isTablet ? "Tablette" : isPhone ? "Mobile" : "Ordinateur";
+  return type + " · " + os + " · " + browser;
+}
+
+/* Nom de l'app, déduit de son URL : https://pseudo.github.io/test-app/ → "test-app",
+   https://pseudo.github.io/latin/révision-mythologie/ → "latin_revision-mythologie".
+   Les accents et caractères spéciaux sont neutralisés (noms d'onglet Sheets sûrs). */
+function getAppName() {
+  try {
+    let p = window.location.pathname.replace(/^\/+/, "").replace(/\/+$/, "");
+    if (!p) return "defaut";
+    p = p.split("/").join("_").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    p = p.replace(/[^A-Za-z0-9_\-]/g, "-").replace(/\-{2,}/g, "-");
+    return p.slice(0, 90) || "defaut";
+  } catch (err) { return "defaut"; }
+}
+
 function track(event, module) {
   if (!TRACK_URL || TRACK_URL.indexOf("COLLE_ICI") === 0) return;
   try {
-    let u = TRACK_URL + "?e=" + encodeURIComponent(event) + "&u=" + encodeURIComponent(getUid());
+    let u = TRACK_URL + "?e=" + encodeURIComponent(event) + "&u=" + encodeURIComponent(getUid())
+          + "&d=" + encodeURIComponent(getDevice())
+          + "&a=" + encodeURIComponent(getAppName());
     if (module) u += "&m=" + encodeURIComponent(module);
     if (document.referrer) u += "&r=" + encodeURIComponent(document.referrer);
     fetch(u, { mode: "no-cors" });
@@ -1467,6 +1493,6 @@ try {
   if (_fb2) _fb2.innerHTML = "<p style='font-weight:700;'>Erreur au démarrage de l'application.</p><pre style='white-space:pre-wrap;font-size:13px;color:#b00;'>" + String(err && err.message ? err.message : err) + "</pre>";
 }
 </script>
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" nonce="bcYsBiQsRZpX4+fwSqPeGQ==" data-cf-beacon='{"version":"2024.11.0","token":"36b4216ae2dc4d5488c249161e71fe1e","spa":2}' crossorigin="anonymous"></script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" nonce="jZV2LVJ8XGQ9vabJwJmGaA==" data-cf-beacon='{"version":"2024.11.0","token":"36b4216ae2dc4d5488c249161e71fe1e","spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
