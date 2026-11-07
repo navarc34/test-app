@@ -18,10 +18,23 @@
    Remplace la valeur ci-dessous par l'URL de déploiement de ton script.
    Tant qu'elle n'est pas remplacée, l'app fonctionne, sans mesure. */
 const TRACK_URL = "https://script.google.com/macros/s/AKfycby71W20SPB9mh8JAuzRtm_UkNr8BrbvNrRCqZVSaO8Szv_qsgjNaaaJl0pTeyMrNcO_Uw/exec";
+
+/* Identifiant visiteur anonyme : généré une fois par navigateur, jamais une donnée personnelle. */
+function getUid() {
+  try {
+    let uid = window.localStorage.getItem("contraction-uid");
+    if (!uid) {
+      uid = "u-" + Math.random().toString(36).slice(2, 10) + "-" + Date.now().toString(36);
+      window.localStorage.setItem("contraction-uid", uid);
+    }
+    return uid;
+  } catch (err) { return "anonyme"; }
+}
+
 function track(event, module) {
   if (!TRACK_URL || TRACK_URL.indexOf("COLLE_ICI") === 0) return;
   try {
-    let u = TRACK_URL + "?e=" + encodeURIComponent(event);
+    let u = TRACK_URL + "?e=" + encodeURIComponent(event) + "&u=" + encodeURIComponent(getUid());
     if (module) u += "&m=" + encodeURIComponent(module);
     if (document.referrer) u += "&r=" + encodeURIComponent(document.referrer);
     fetch(u, { mode: "no-cors" });
@@ -1454,6 +1467,6 @@ try {
   if (_fb2) _fb2.innerHTML = "<p style='font-weight:700;'>Erreur au démarrage de l'application.</p><pre style='white-space:pre-wrap;font-size:13px;color:#b00;'>" + String(err && err.message ? err.message : err) + "</pre>";
 }
 </script>
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" nonce="Sw/Piht8w41jW6RLs0zFow==" data-cf-beacon='{"version":"2024.11.0","token":"36b4216ae2dc4d5488c249161e71fe1e","spa":2}' crossorigin="anonymous"></script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" nonce="bcYsBiQsRZpX4+fwSqPeGQ==" data-cf-beacon='{"version":"2024.11.0","token":"36b4216ae2dc4d5488c249161e71fe1e","spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
