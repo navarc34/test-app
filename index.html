@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Réviser la contraction de texte — 1ère ST2S3</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+/* ============ MESURE D'AUDIENCE (Google Apps Script) ============
+   Remplace la valeur ci-dessous par l'URL de déploiement de ton script
+   (voir guide de déploiement). Tant qu'elle n'est pas remplacée,
+   l'app fonctionne normalement, sans mesure. */
+const TRACK_URL = "COLLE_ICI_L_URL_DEPLOIEMENT_APPS_SCRIPT";
+
+function track(event, module) {
+  if (!TRACK_URL || TRACK_URL.indexOf("COLLE_ICI") === 0) return;
+  try {
+    let u = TRACK_URL + "?e=" + encodeURIComponent(event);
+    if (module) u += "&m=" + encodeURIComponent(module);
+    if (document.referrer) u += "&r=" + encodeURIComponent(document.referrer);
+    fetch(u, { mode: "no-cors" });
+  } catch (err) {}
+}
+</script>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useMemo } = React;
+
+const T = {
+  page: "bg-[#FAFAF9]",
+  card: "bg-white",
+  ink: "text-[#18181B]",
+  sub: "text-[#52525B]",
+  faint: "text-[#A1A1AA]",
+  line: "border-[#E8E8E4]",
+  soft: "bg-[#F4F4F1]",
+  font: "font-sans",
+  shadow: "shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_40px_-24px_rgba(0,0,0,0.18)]",
+  hex: "#18181B",
+  onHex: "#FFFFFF",
+  onAccent: "#FFFFFF",
+  warn: "#B45309",
+};
+const ACCENTS = {
+  flash: { name: "Flashcards", hex: "#0D9488" },
+  quiz: { name: "Quiz", hex: "#2563EB" },
+  vf: { name: "Vrai / Faux", hex: "#D97706" },
+  count: { name: "Comptage", hex: "#7C3AED" },
+  texte: { name: "Analyser un texte", hex: "#65A30D" },
+};
+
+function shuffle(arr) {
+  const r = [...arr];
+  for (let i = r.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [r[i], r[j]] = [r[j], r[i]];
+  }
+  return r;
+}
+
+function useProgress() {
+  const [scores, setScores] = useState({});
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem("contraction-progress");
+      if (raw) setScores(JSON.parse(raw));
+    } catch (e) {}
+  }, []);
+  const save = (key, value) => {
+    setScores((prev) => {
+      const next = { ...prev, [key]: value };
+      try { window.localStorage.setItem("contraction-progress", JSON.stringify(next)); } catch (e) {}
+      return next;
+    });
+  };
+  const reset = () => {
+    setScores({});
+    try { window.localStorage.removeItem("contraction-progress"); } catch (e) {}
+  };
+  return { scores, save, reset };
+}
+
+/* ============ DONNÉES PÉDAGOGIQUES ============ */
+
+// Flashcards : rappel actif + auto-évaluation métacognitive (« Je savais / À revoir »)
+const FLASHCARDS = [
+  { q: "En quoi consiste la contraction de texte ?", a: "Réduire un texte de littérature d'idées au QUART de sa longueur (± 10 %), en le REFORMULANT avec ses propres mots, sans en changer le sens, l'ordre des idées ni l'énonciation.", tag: "Définition" },
+  { q: "Quels sont les 4 principes à respecter toujours ?", a: "1) Conserver l'énonciation — 2) Suivre l'ordre des idées — 3) Reformuler (jamais recopier) — 4) Réduire au quart (± 10 %).", tag: "Les 4 principes" },
+  { q: "Un texte de 1000 mots : combien de mots pour votre contraction ?", a: "Le quart, soit 250 mots, avec une marge de 10 % : entre 225 et 275 mots.", tag: "Les 4 principes" },
+  { q: "Que devez-vous absolument indiquer à la fin de votre copie ?", a: "Le NOMBRE DE MOTS employés. C'est une obligation : son absence est sanctionnée.", tag: "Les 4 principes" },
+  { q: "Si l'auteur dit « je » ou « nous », que faites-vous dans votre contraction ?", a: "Vous gardez « je » ou « nous ». Vous vous mettez à la place de l'auteur. Jamais de reformulation au discours indirect.", tag: "Énonciation" },
+  { q: "Quelles formules sont INTERDITES dans une contraction ?", a: "« L'auteur dit que… », « selon l'auteur… », « ce texte parle de… ». La contraction n'est pas un commentaire : vous parlez à la place de l'auteur, jamais sur le texte.", tag: "Énonciation" },
+  { q: "Quelle est la différence entre l'énonciation et le ton ?", a: "L'énonciation : qui parle, à qui, avec quels pronoms et quels temps. Le ton : la tonalité (ironique, polémique, pathétique…). Les DEUX doivent être conservés (ponctuation expressive, exclamations, questions rhétoriques).", tag: "Énonciation" },
+  { q: "Faut-il conserver tous les exemples du texte ?", a: "NON. L'exemple ILLUSTRATIF (qui détaille sans faire avancer l'argumentation) peut être supprimé. L'exemple ARGUMENTATIF (qui fonde le raisonnement) doit être conservé, judicieusement reformulé.", tag: "Arguments et exemples" },
+  { q: "Comment repérer la thèse d'un texte ?", a: "C'est l'OPINION de l'auteur sur le thème : la phrase (souvent finale) qui peut être discutée. On la repère grâce au paratexte, à l'énonciation, aux modalisateurs et aux champs lexicaux. Une thèse se reformule EN UNE PHRASE.", tag: "Arguments et exemples" },
+  { q: "Que faire des liens logiques (connecteurs) du texte ?", a: "Les ENCADRER au brouillon : ils dessinent l'ossature du texte. Dans la contraction, on garde les articulations logiques, souvent remplacées par des connecteurs plus concis, voire par la ponctuation (« : » remplace « en effet »).", tag: "Organisation" },
+  { q: "Qu'est-ce que le « montage de citations » ? A-t-il le droit de rester dans la copie ?", a: "C'est un outil de BROUILLON : un premier résumé fait de citations soulignées, qui respecte la structure du texte. Il sert de squelette, puis chaque citation est REFORMULÉE dans la copie finale. On ne cite JAMAIS dans la contraction.", tag: "Brouillon" },
+  { q: "Certains mots ne peuvent pas être remplacés par des synonymes : lesquels ?", a: "Les termes désignant une discipline (la psychanalyse…), un concept précis (le relativisme culturel…), ou un mot inventé par l'auteur. On peut les GARDER dans la contraction, sans guillemets.", tag: "Reformulation" },
+  { q: "Comment compte-t-on les mots ? Donnez trois exemples pièges.", a: "Tout mot compte, dès qu'il est séparé par un blanc ou un signe typographique (sauf le « t » euphonique). Pièges : « aujourd'hui » = 1 ; « y a-t-il » = 3 ; « c'est-à-dire » = 4 ; « 2019 » ou « ONG » = 1 ; « d'après » = 2.", tag: "Comptage" },
+  { q: "Comment gérer ses deux heures le jour du DS ?", a: "Toute la préparation se fait AU BROUILLON : lecture (deux fois), repérages, plan, montage de citations, première reformulation SANS compter les mots, puis resserrage. On ne recopie au propre qu'à la fin : alinéa à chaque changement de paragraphe, nombre de mots indiqué.", tag: "Brouillon" },
+  { q: "Qu'est-ce qu'une paraphrase, et pourquoi est-ce un piège ?", a: "Reformuler le texte SANS le réduire : on suit le texte de trop près, phrase par phrase. La contraction doit garder une DISTANCE : on résume par MOUVEMENT, pas ligne à ligne.", tag: "Pièges" },
+  { q: "Que signifie « respecter l'équilibre des volumes » ?", a: "Chaque mouvement du texte doit occuper dans votre contraction une place proportionnelle à son importance dans le texte source. Ne « sacrifiez » jamais la fin du texte !", tag: "Pièges" },
+];
+
+// Quiz QCM : retrieval practice + feedback expliqué
+const QUIZ = [
+  { q: "Au DS, le texte source compte environ 1000 mots. Votre contraction doit compter environ…", choices: ["100 mots", "250 mots", "500 mots", "Autant que le texte"], correct: 1, why: "Le quart de 1000 = 250 mots, avec une marge de ± 10 % (225 à 275)." },
+  { q: "Vous lisez : « L'auteur explique ensuite que le tourisme est une rencontre manquée. » Qu'en penser ?", choices: ["Rien à signaler", "C'est une bonne reformulation neutre", "FAUTE : formulation interdite, il faut garder l'énonciation de l'auteur", "Il manque le nombre de mots"], correct: 2, why: "« L'auteur explique que… » est interdit. Si Boudhiba dit « nous », vous dites « nous »." },
+  { q: "Dans le texte, un exemple concret illustre longuement un argument déjà clair. Que faites-vous ?", choices: ["Vous le gardez intégralement", "Vous le supprimez : c'est un exemple illustratif", "Vous le citez entre guillemets", "Vous en inventez un plus court"], correct: 1, why: "L'exemple ILLUSTRATIF peut disparaître ; seul l'exemple ARGUMENTATIF (qui fonde le raisonnement) se conserve, reformulé." },
+  { q: "« c'est-à-dire » compte pour…", choices: ["1 mot", "2 mots", "3 mots", "4 mots"], correct: 3, why: "c' / est / à / dire = 4 unités séparées par des signes typographiques." },
+  { q: "La phrase « il n'en va pas toujours ainsi » du texte source peut être rendue dans la contraction par :", choices: ["« il n'en va pas toujours ainsi » (recopiée)", "« Cependant, la réalité est différente »", "« L'auteur déplore cette situation »", "On la supprime : les points de suspension ne servent à rien"], correct: 1, why: "On reformule en gardant le mouvement d'opposition (« cependant ») : jamais de recopiage, jamais de commentaire sur le texte." },
+  { q: "Le brouillon idéal avant de rédiger, c'est :", choices: ["Une copie propre du texte", "Le texte source surligné + un plan par mouvements + un montage de citations à reformuler", "Une liste de synonymes seulement", "Rien : on rédige directement au propre"], correct: 1, why: "Le brouillon combine les repérages (mots-clés, connecteurs, énonciation), le plan détaillé par mouvements et une première reformulation — sans compter les mots à ce stade." },
+  { q: "Vous avez écrit 300 mots au lieu de 250 (± 10 %). Que faire ?", choices: ["Rien, 10 % de plus passe inaperçu", "Supprimer les articulations logiques pour gagner de la place", "Resserrer chaque mouvement sans perdre les idées majeures", "Ajouter une introduction pour expliquer"], correct: 2, why: "300 > 275 : c'est trop long. On resserre (subordonnée → groupe prépositionnel, énumération → terme globalisant) sans perdre le sens ni l'ordre." },
+  { q: "Le texte source est ironique. Votre contraction…", choices: ["Doit être neutre et objective", "Doit rendre l'ironie (lexique, syntaxe, ponctuation)", "Peut garder deux ou trois citations drôles", "Doit signaler l'ironie entre parenthèses"], correct: 1, why: "On conserve le STYLE : ton, niveau de langue, ponctuation expressive. La contraction est fidèle à la personnalité du texte." },
+  { q: "Quelle est la bonne première action devant le texte ?", choices: ["Compter les mots du texte", "Le lire deux fois, crayon en main, pour repérer thème + thèse + structure", "Rédiger directement au quart", "Chercher les synonymes dans le dictionnaire"], correct: 1, why: "Étape 1 = lire et comprendre : sujet, thèse défendue (et éventuellement thèse réfutée), énonciation, mouvements." },
+  { q: "« Il faut qu'il en soit ainsi » : phrase personnelle ou impersonnelle ?", choices: ["Personnelle : « il » désigne le touriste", "Impersonnelle : « il » est un pronom neutre", "C'est une question rhétorique", "Aucune des deux : c'est une citation"], correct: 1, why: "Le « il » impersonnel ne désigne rien ni personne ; le verbe reste à la 3e personne du singulier." },
+  { q: "Quelle série présente l'ordre correct de la méthode, au brouillon ?", choices: ["Compter les mots → lire le texte → reformuler → recopier", "Lire et repérer la thèse → trier idées et exemples → reformuler sans compter → resserrer au quart et recopier", "Reformuler → repérer la thèse → trier → compter", "Lire → rédiger directement au propre → compter à la fin"], correct: 1, why: "La méthode en 4 étapes : 1) lire deux fois, repérer la thèse et les connecteurs ; 2) trier (idées principales, exemples à garder) ; 3) reformuler au brouillon sans compter ; 4) compter, resserrer au quart (± 10 %) puis recopier au propre avec le nombre de mots." },
+];
+
+// Vrai / Faux : les règles du jeu
+const VRAIFAUX = [
+  { s: "On peut écrire « selon l'auteur » si l'on cite la source.", v: false, why: "Interdit : on garde l'énonciation de l'auteur, sans commentaire sur le texte." },
+  { s: "« aujourd'hui » compte pour 1 mot.", v: true, why: "Mot composé dont les éléments, pris séparément, ne sont pas signifiants (« hui » n'existe pas seul)." },
+  { s: "On doit garder le même ordre des idées que le texte source.", v: true, why: "La contraction suit la composition et la progression du texte, mouvement par mouvement." },
+  { s: "Il est permis d'ajouter un exemple personnel pour clarifier un argument.", v: false, why: "Aucune idée personnelle, aucune information extérieure au texte." },
+  { s: "« y a-t-il » compte pour 2 mots.", v: false, why: "3 mots (y / a / il) : le « t » euphonique seul ne compte pas, mais les autres unités oui." },
+  { s: "Indiquer le nombre de mots à la fin est facultatif.", v: false, why: "Obligatoire : c'est une règle de l'exercice, son absence est sanctionnée." },
+  { s: "La contraction doit être entièrement rédigée au style neutre et impersonnel.", v: false, why: "Elle doit être OBJECTIVE ET FIDÈLE : si l'auteur dit « je », vous dites « je »." },
+  { s: "Une subordonnée peut être remplacée par un groupe prépositionnel pour gagner des mots.", v: true, why: "Ex. : « parce qu'il est venu pour le pays » → « par intérêt pour le pays »." },
+  { s: "On peut conserver, sans guillemets, un concept sans synonyme (ex. « relativisme culturel »).", v: true, why: "Les termes de discipline ou concepts précis sont impossibles à substituer : on les garde." },
+  { s: "On commence par compter les mots du texte source.", v: false, why: "On compte seulement à la fin de la première reformulation — jamais au début." },
+];
+
+// Entraînement au comptage
+const COMPTAGE = [
+  { expr: "aujourd'hui", n: 1, why: "Mot composé à éléments non signifiants = 1 mot." },
+  { expr: "c'est-à-dire", n: 4, why: "c' / est / à / dire = 4 mots (unités séparées par des signes typographiques)." },
+  { expr: "y a-t-il", n: 3, why: "y / a / il = 3 mots ; le « t » euphonique ne compte pas." },
+  { expr: "d'après", n: 2, why: "d' + après = 2 mots (l'élision « d' » compte pour 1)." },
+  { expr: "ONG", n: 1, why: "Un sigle = 1 mot." },
+  { expr: "2019", n: 1, why: "Un millésime = 1 mot." },
+  { expr: "celui-ci", n: 1, why: "Un pronom composé = 1 mot." },
+  { expr: "l'école", n: 2, why: "l' + école = 2 mots." },
+  { expr: "qu'est-ce que c'est ?", n: 6, why: "qu' / est / ce / que / c' / est = 6 mots." },
+];
+
+
+/* ---- Textes d'entraînement (anthologie Hatier Littérature, lycée) ---- */
+const TEXTES = [
+  {
+    auteur: "Émilie Du Châtelet",
+    oeuvre: "Discours sur le bonheur (1779)",
+    focus: "Énonciation",
+    texte: "Il est certain que l'amour de l'étude est bien moins nécessaire au bonheur des hommes qu'à celui des femmes. Les hommes ont une infinité de ressources pour être heureux, qui manquent entièrement aux femmes. Ils ont bien d'autres moyens d'arriver à la gloire ; mais les femmes sont exclues, par leur état, de toute espèce de gloire, et quand, par hasard, il s'en trouve quelqu'une qui est née avec une âme assez élevée, il ne lui reste que l'étude pour la consoler de toutes les exclusions et de toutes les dépendances auxquelles elle se trouve condamnée par état.",
+    consigne: "Avant de révéler : qui parle ? Quels pronoms et quelles oppositions structurent le texte ? L'auteure s'implique-t-elle ?",
+    reponse: [
+      "Énonciation : l'auteure écrit à la 3e personne (« les hommes », « les femmes », « elle »), mais elle parle d'expérience : femme savante du XVIIIe siècle, elle est elle-même ce « quelqu'une » d'« âme assez élevée ». L'implication est forte, même sans « je ».",
+      "« Il est certain que… » : affirmation assurée, ton persuasif d'entrée.",
+      "Le texte repose sur une opposition systématique hommes / femmes : « ont une infinité de ressources » contre « manquent entièrement » ; « bien d'autres moyens » contre « exclues de toute espèce de gloire ».",
+      "Thèse : pour les femmes, l'étude est la seule voie de gloire et le seul recours de bonheur.",
+    ],
+    tip: "Dans une contraction : garder l'opposition hommes/femmes et le tour « il est certain » (assurance), sans écrire « l'auteure estime que… ».",
+  },
+  {
+    auteur: "Simone de Beauvoir",
+    oeuvre: "Le Deuxième Sexe (1949)",
+    focus: "Thème et thèse",
+    texte: "Les accomplissements personnels sont presque impossibles dans les catégories humaines collectivement maintenues dans une situation inférieure. « Avec des jupes, où voulez-vous qu'on aille ? » demandait Marie Bashkirtseff. À vrai dire, on ne naît pas génie : on le devient ; et la condition féminine a rendu jusqu'à présent ce devenir impossible.",
+    consigne: "Avant de révéler : quel est le thème ? Quelle est la thèse de l'auteure ? Quelle citation sert d'argument ?",
+    reponse: [
+      "Thème : la condition féminine (l'accès des femmes à l'accomplissement et à la création).",
+      "Thèse : la situation d'infériorité imposée collectivement aux femmes les empêche de s'accomplir. Formulée en une phrase : « maintenues dans une situation inférieure, les femmes ne peuvent pas devenir des génies, car on ne naît pas génie : on le devient ».",
+      "L'argument décisif : « on ne naît pas génie : on le devient » — ce n'est pas une nature qui manque aux femmes, mais des CONDITIONS.",
+      "La citation de Bashkirtseff (« Avec des jupes… ») est un exemple : elle illustre concrètement l'obstacle matériel et social. Dans une contraction resserrée, elle peut être reformulée en quelques mots ou disparaître.",
+    ],
+    tip: "Piège : ne pas confondre thème (ce dont on parle) et thèse (ce que l'auteure affirme). La thèse se reformule en UNE phrase.",
+  },
+  {
+    auteur: "Albert Camus",
+    oeuvre: "Éditorial de Combat, 8 août 1945",
+    focus: "Connecteurs et organisation",
+    texte: "On nous apprend, en effet, au milieu d'une foule de commentaires enthousiastes, que n'importe quelle ville d'importance moyenne peut être totalement rasée par une bombe de la grosseur d'un ballon de football. Nous nous résumerons en une phrase : la civilisation mécanique vient de parvenir à son dernier degré de sauvagerie. Il va falloir choisir, dans un avenir plus ou moins proche, entre le suicide collectif ou l'utilisation intelligente des conquêtes scientifiques. En attendant, il est permis de penser qu'il y a quelque indécence à célébrer ainsi une découverte qui se met d'abord au service de la plus formidable rage de destruction.",
+    consigne: "Avant de révéler : encadre mentalement les connecteurs et articulations. Quel est le mouvement du texte (constat → … → …) ?",
+    reponse: [
+      "Connecteurs et articulations : « en effet » (confirmation), « Nous nous résumerons en une phrase : » (annonce de la synthèse), « Il va falloir choisir… ou… » (alternative), « En attendant » (transition), « mais » (opposition, plus loin dans l'éditorial).",
+      "Mouvement : 1) constat factuel (l'information, avec l'exemple concret du « ballon de football ») → 2) synthèse-choc, c'est la thèse (« dernier degré de sauvagerie ») → 3) alternative qui en découle (suicide collectif OU utilisation intelligente) → 4) réquisitoire contre les commentaires enthousiastes (« indécence »).",
+      "Énonciation : « nous » collectif — le journaliste parle avec ses lecteurs ; à conserver dans la contraction.",
+      "Le détail « bombe de la grosseur d'un ballon de football » est un exemple illustratif : reformulable en « une seule bombe » dans une contraction très resserrée.",
+    ],
+    tip: "Les connecteurs sont l'ossature du plan : en les repérant d'abord, tu tiens les mouvements du texte sans te perdre.",
+  },
+  {
+    auteur: "Montesquieu",
+    oeuvre: "De l'esprit des lois, « De l'esclavage des nègres » (1748)",
+    focus: "Défi : la thèse implicite (ironie)",
+    texte: "Si j'avais à soutenir le droit que nous avons eu de rendre les nègres esclaves, voici ce que je dirais : les peuples d'Europe ayant exterminé ceux de l'Amérique, ils ont dû mettre en esclavage ceux de l'Afrique, pour s'en servir à défricher tant de terres. Le sucre serait trop cher, si l'on ne faisait travailler la plante qui le produit par des esclaves. Il est impossible que nous supposions que ces gens-là soient des hommes, parce que, si nous les supposions des hommes, on commencerait à croire que nous ne sommes pas nous-mêmes chrétiens.",
+    consigne: "Défi ! Avant de révéler : Montesquieu défend-il vraiment l'esclavage ? Quels indices te permettent d'en douter ?",
+    reponse: [
+      "NON : Montesquieu CONDAMNE l'esclavage. Il manie le raisonnement par l'absurde : il « emprunte » la voix des esclavagistes et pousse leurs arguments jusqu'au ridicule pour les faire s'effondrer.",
+      "Indices : « Si j'avais à soutenir… voici ce que je DIRAIS » (hypothétique : il ne parle pas en son nom) ; « le sucre serait trop cher » (argument dérisoire : une denrée contre des vies) ; la chute : croire que les Noirs ne sont pas des hommes reviendrait à avouer que nous ne sommes pas chrétiens.",
+      "Thèse réelle (implicite) : l'esclavage est une insulte à l'humanité et à la religion elle-même.",
+      "TON ironique : sans dire « ironiquement », la contraction doit le rendre (des arguments volontairement absurdes, une logique qui se dénonce elle-même).",
+    ],
+    tip: "Au bac, si la thèse est ironique ou implicite, la reformuler au premier degré est une faute sanctionnée : vérifie TOUJOURS qui parle vraiment.",
+  },
+];
+
+
+
+/* ============ DESIGN SYSTEM (premium) ============ */
+const OKS  = { background: "rgba(5,150,105,0.10)",  borderColor: "rgba(5,150,105,0.45)" };
+const BADS = { background: "rgba(225,29,72,0.08)", borderColor: "rgba(225,29,72,0.40)" };
+const WARNS = { background: "rgba(217,119,6,0.12)" };
+
+function Ring({ value, size = 56, stroke = 5, color }) {
+  const v = Math.min(100, Math.max(0, value));
+  const r = (size - stroke) / 2;
+  const c = 2 * Math.PI * r;
+  return (
+    <div className="relative shrink-0" style={{ width: size, height: size }}>
+      <svg width={size} height={size} style={{ transform: "rotate(-90deg)" }}>
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeOpacity="0.15" strokeWidth={stroke} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={stroke} strokeLinecap="round"
+          strokeDasharray={c} strokeDashoffset={c - (v / 100) * c}
+          style={{ transition: "stroke-dashoffset 0.7s cubic-bezier(0.22,1,0.36,1)" }} />
+      </svg>
+      <div className="absolute inset-0 grid place-items-center">
+        <span className="text-[11px] font-bold tabular-nums" style={{ color }}>{v}%</span>
+      </div>
+    </div>
+  );
+}
+
+function Card({ children, className = "p-7" }) {
+  return <div className={`rounded-2xl border ${T.line} ${T.card} ${T.shadow} ${className}`}>{children}</div>;
+}
+
+function Eyebrow({ children }) {
+  return <p className={`text-[11px] font-bold uppercase tracking-[0.16em] ${T.faint}`}>{children}</p>;
+}
+
+function Button({ children, onClick, tone = "primary", accent, className = "", disabled }) {
+  const primary = tone === "primary";
+  return (
+    <button onClick={onClick} disabled={disabled}
+      className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all active:scale-[0.97] disabled:opacity-40 border ${primary ? "border-transparent" : `${T.line} ${T.soft} ${T.ink} hover:opacity-75`} ${className}`}
+      style={primary ? { background: accent || T.hex, color: accent ? T.onAccent : T.onHex } : undefined}>
+      {children}
+    </button>
+  );
+}
+
+function ModHead({ accent, left, right }) {
+  return (
+    <div className="flex items-center justify-between mb-5">
+      <Eyebrow>{left}</Eyebrow>
+      <span className="text-xs font-bold tabular-nums px-2.5 py-1 rounded-full" style={{ background: accent + "1F", color: accent }}>{right}</span>
+    </div>
+  );
+}
+
+function Tabs({ view, setView }) {
+  const items = [
+    { key: "home", label: "Réviser", icon: "✦", hex: T.hex, fg: T.onHex },
+    { key: "flash", label: "Flashcards", icon: "🃏", hex: ACCENTS.flash.hex, fg: T.onAccent },
+    { key: "quiz", label: "Quiz", icon: "🎯", hex: ACCENTS.quiz.hex, fg: T.onAccent },
+    { key: "vf", label: "Vrai / Faux", icon: "⚖️", hex: ACCENTS.vf.hex, fg: T.onAccent },
+    { key: "count", label: "Comptage", icon: "🔢", hex: ACCENTS.count.hex, fg: T.onAccent },
+    { key: "texte", label: "Analyser", icon: "📄", hex: ACCENTS.texte.hex, fg: T.onAccent },
+  ];
+  return (
+    <div className={`flex flex-wrap gap-1 p-1 rounded-full border ${T.line} ${T.soft} mb-8`}>
+      {items.map((it) => {
+        const active = view === it.key;
+        return (
+          <button key={it.key} onClick={() => setView(it.key)}
+            className={`px-4 py-2.5 rounded-full text-sm font-semibold transition-all ${active ? "" : `${T.sub} hover:opacity-70`}`}
+            style={active ? { background: it.hex, color: it.fg } : undefined}>
+            <span className="mr-1.5">{it.icon}</span>{it.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ---- Flashcards ---- */
+function Flashcards({ onScore }) {
+  const [order, setOrder] = useState(() => shuffle(FLASHCARDS.map((_, i) => i)));
+  const [idx, setIdx] = useState(0);
+  const [flipped, setFlipped] = useState(false);
+  const [known, setKnown] = useState([]);
+  const [again, setAgain] = useState([]);
+  const [done, setDone] = useState(false);
+  const accent = ACCENTS.flash.hex;
+  const card = FLASHCARDS[order[idx]];
+
+  const judge = (ok) => {
+    const nk = ok ? [...known, order[idx]] : known;
+    const na = ok ? again : [...again, order[idx]];
+    setKnown(nk); setAgain(na); setFlipped(false);
+    if (idx + 1 >= order.length) { onScore("flash", Math.round((nk.length / order.length) * 100)); setDone(true); }
+    else setIdx(idx + 1);
+  };
+  const restart = (onlyAgain) => {
+    const pool = onlyAgain && again.length > 0 ? again : shuffle(FLASHCARDS.map((_, i) => i));
+    setOrder(pool); setIdx(0); setKnown([]); setAgain([]); setDone(false); setFlipped(false);
+  };
+
+  if (done) {
+    const total = known.length + again.length || 1;
+    const pct = Math.round((known.length / total) * 100);
+    return (
+      <Card>
+        <Eyebrow>Bilan de la série</Eyebrow>
+        <div className="flex items-center gap-6 mt-4 mb-5">
+          <Ring value={pct} size={72} color={accent} />
+          <div>
+            <p className={`text-lg font-bold ${T.ink}`}>✅ {known.length} maîtrisées · 🔁 {again.length} à revoir</p>
+            {again.length > 0 && (
+              <p className={`text-sm ${T.sub} mt-1`}>À rejouer en priorité : {again.map((i) => FLASHCARDS[i].tag).filter((x, k, arr) => arr.indexOf(x) === k).join(", ")}</p>
+            )}
+          </div>
+        </div>
+        <div className="flex gap-3 flex-wrap">
+          {again.length > 0 && <Button accent={accent} onClick={() => restart(true)}>Rejouer les cartes à revoir</Button>}
+          <Button tone="ghost" onClick={() => restart(false)}>Rejouer toutes les cartes</Button>
+        </div>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <ModHead accent={accent} left={card.tag} right={`${idx + 1} / ${order.length}`} />
+      <button onClick={() => setFlipped(!flipped)}
+        className={`w-full min-h-56 rounded-2xl border-2 ${T.line} ${T.card} p-8 flex items-center justify-center text-center transition-all active:scale-[0.99]`}
+        style={{ borderColor: flipped ? accent : undefined }}>
+        {!flipped
+          ? <p className={`text-xl font-semibold leading-snug ${T.ink}`}>{card.q}</p>
+          : <p className={`text-[15px] leading-relaxed ${T.sub}`}>{card.a}</p>}
+      </button>
+      <p className={`text-xs font-semibold text-center mt-3 ${T.faint}`}>{flipped ? "Clique pour revoir la question" : "Réfléchis… puis clique pour vérifier"}</p>
+      {flipped && (
+        <div className="flex gap-3 mt-5">
+          <Button tone="ghost" className="flex-1" onClick={() => judge(true)}>✅ Je savais</Button>
+          <Button accent={accent} className="flex-1" onClick={() => judge(false)}>🔁 À revoir</Button>
+        </div>
+      )}
+    </Card>
+  );
+}
+
+/* ---- Quiz ---- */
+function Quiz({ onScore }) {
+  const [order, setOrder] = useState(() => shuffle(QUIZ.map((_, k) => k)));
+  const [i, setI] = useState(0);
+  const [picked, setPicked] = useState(null);
+  const [score, setScore] = useState(0);
+  const [done, setDone] = useState(false);
+  const accent = ACCENTS.quiz.hex;
+  const q = QUIZ[order[i]];
+
+  const pick = (k) => { if (picked === null) { setPicked(k); if (k === q.correct) setScore(score + 1); } };
+  const next = () => {
+    if (i + 1 >= order.length) { onScore("quiz", Math.round((score / order.length) * 100)); setDone(true); }
+    else { setI(i + 1); setPicked(null); }
+  };
+
+  if (done) {
+    const pct = Math.round((score / order.length) * 100);
+    return (
+      <Card>
+        <Eyebrow>Résultat du quiz</Eyebrow>
+        <div className="flex items-center gap-6 mt-4 mb-5">
+          <Ring value={pct} size={72} color={accent} />
+          <div>
+            <p className={`text-2xl font-bold ${T.ink}`}>{score} / {order.length}</p>
+            <p className={`text-sm ${T.sub} mt-1`}>{pct >= 80 ? "Excellent ! Tu es prêt(e) pour les règles du jeu. 🎉" : pct >= 50 ? "Bonne base — rejoue pour verrouiller les pièges. 💪" : "Reprends les flashcards puis reviens : c'est en se trompant qu'on apprend. 🌱"}</p>
+          </div>
+        </div>
+        <Button accent={accent} onClick={() => { setOrder(shuffle(QUIZ.map((_, k) => k))); setI(0); setPicked(null); setScore(0); setDone(false); }}>Rejouer le quiz</Button>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <ModHead accent={accent} left="Choix multiple" right={`${i + 1} / ${order.length}`} />
+      <p className={`text-lg font-semibold leading-snug ${T.ink} mb-5`}>{q.q}</p>
+      <div className="space-y-2.5">
+        {q.choices.map((c, k) => {
+          let style;
+          if (picked !== null) style = k === q.correct ? OKS : (k === picked ? BADS : { opacity: 0.45 });
+          return (
+            <button key={k} onClick={() => pick(k)} disabled={picked !== null}
+              className={`w-full text-left px-4 py-3.5 rounded-xl border ${T.line} ${T.card} flex items-start gap-3 text-sm transition-all ${picked === null ? "hover:-translate-y-px" : ""}`}
+              style={style}>
+              <span className={`w-6 h-6 rounded-full grid place-items-center text-[11px] font-bold shrink-0 ${T.ink}`}
+                style={{ background: picked === null ? undefined : (k === q.correct ? "rgba(5,150,105,0.16)" : k === picked ? "rgba(225,29,72,0.14)" : undefined) }}>
+                {String.fromCharCode(65 + k)}
+              </span>
+              <span className={T.ink}>{c}</span>
+            </button>
+          );
+        })}
+      </div>
+      {picked !== null && (
+        <div className="mt-5 rounded-xl border p-4 text-sm" style={picked === q.correct ? OKS : BADS}>
+          <b className={T.ink}>{picked === q.correct ? "✅ Exact. " : "❌ Pas tout à fait. "}</b>
+          <span className={T.sub}>{q.why}</span>
+          <div className="mt-3"><Button accent={accent} onClick={next}>{i + 1 >= order.length ? "Voir mon résultat" : "Question suivante →"}</Button></div>
+        </div>
+      )}
+    </Card>
+  );
+}
+
+/* ---- Vrai / Faux ---- */
+function VraiFaux({ onScore }) {
+  const [order, setOrder] = useState(() => shuffle(VRAIFAUX.map((_, k) => k)));
+  const [i, setI] = useState(0);
+  const [answered, setAnswered] = useState(null);
+  const [score, setScore] = useState(0);
+  const [done, setDone] = useState(false);
+  const accent = ACCENTS.vf.hex;
+  const s = VRAIFAUX[order[i]];
+
+  const answer = (v) => { if (answered === null) { setAnswered(v); if (v === s.v) setScore(score + 1); } };
+  const next = () => {
+    if (i + 1 >= order.length) { onScore("vf", Math.round((score / order.length) * 100)); setDone(true); }
+    else { setI(i + 1); setAnswered(null); }
+  };
+
+  if (done) {
+    const pct = Math.round((score / order.length) * 100);
+    return (
+      <Card>
+        <Eyebrow>Résultat Vrai / Faux</Eyebrow>
+        <div className="flex items-center gap-6 mt-4 mb-5">
+          <Ring value={pct} size={72} color={accent} />
+          <div>
+            <p className={`text-2xl font-bold ${T.ink}`}>{score} / {order.length}</p>
+            <p className={`text-sm ${T.sub} mt-1`}>{pct >= 80 ? "Les règles du jeu n'ont plus de secret pour toi. ✨" : "Relis la fiche « Règles du jeu » de la méthodo, puis rejoue. 📘"}</p>
+          </div>
+        </div>
+        <Button accent={accent} onClick={() => { setOrder(shuffle(VRAIFAUX.map((_, k) => k))); setI(0); setAnswered(null); setScore(0); setDone(false); }}>Rejouer</Button>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <ModHead accent={accent} left="Règles du jeu" right={`${i + 1} / ${order.length}`} />
+      <p className={`text-lg font-semibold leading-snug ${T.ink} mb-6`}>{s.s}</p>
+      <div className="flex gap-3">
+        {[true, false].map((v) => {
+          const isPicked = answered === v;
+          const good = v === s.v;
+          let style;
+          if (answered !== null) style = isPicked ? (good ? OKS : BADS) : { opacity: 0.4 };
+          return (
+            <button key={String(v)} onClick={() => answer(v)} disabled={answered !== null}
+              className={`flex-1 py-3.5 rounded-xl border font-bold text-sm transition-all ${T.line} ${T.card} ${T.ink} ${answered === null ? "hover:-translate-y-px" : ""}`}
+              style={style}>
+              {v ? "VRAI" : "FAUX"}
+            </button>
+          );
+        })}
+      </div>
+      {answered !== null && (
+        <div className="mt-5 rounded-xl border p-4 text-sm" style={answered === s.v ? OKS : BADS}>
+          <b className={T.ink}>{answered === s.v ? "✅ Bien vu. " : "❌ Raté… "}</b>
+          <span className={T.sub}>{s.why}</span>
+          <div className="mt-3"><Button accent={accent} onClick={next}>{i + 1 >= order.length ? "Voir mon résultat" : "Suivante →"}</Button></div>
+        </div>
+      )}
+    </Card>
+  );
+}
+
+/* ---- Comptage ---- */
+function Comptage({ onScore }) {
+  const [order, setOrder] = useState(() => shuffle(COMPTAGE.map((_, i) => i)));
+  const [i, setI] = useState(0);
+  const [val, setVal] = useState("");
+  const [checked, setChecked] = useState(false);
+  const [score, setScore] = useState(0);
+  const [done, setDone] = useState(false);
+  const accent = ACCENTS.count.hex;
+  const item = COMPTAGE[order[i]];
+
+  const check = () => { setChecked(true); if (parseInt(val, 10) === item.n) setScore(score + 1); };
+  const next = () => {
+    if (i + 1 >= order.length) { onScore("count", Math.round((score / order.length) * 100)); setDone(true); }
+    else { setI(i + 1); setVal(""); setChecked(false); }
+  };
+
+  if (done) {
+    const pct = Math.round((score / order.length) * 100);
+    return (
+      <Card>
+        <Eyebrow>Résultat du comptage</Eyebrow>
+        <div className="flex items-center gap-6 mt-4 mb-5">
+          <Ring value={pct} size={72} color={accent} />
+          <p className={`text-sm ${T.sub}`}>Règle d'or : tout mot compte, séparé par un blanc ou un signe typographique — sauf le « t » euphonique.</p>
+        </div>
+        <Button accent={accent} onClick={() => { setOrder(shuffle(COMPTAGE.map((_, k) => k))); setI(0); setVal(""); setChecked(false); setScore(0); setDone(false); }}>Rejouer</Button>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <ModHead accent={accent} left="Combien de mots ?" right={`${i + 1} / ${order.length}`} />
+      <div className={`rounded-2xl ${T.soft} p-8 text-center mb-5`}>
+        <p className={`text-3xl font-bold tracking-tight ${T.ink}`}>« {item.expr} »</p>
+      </div>
+      {!checked ? (
+        <div className="flex gap-3">
+          <input type="number" min="0" value={val} onChange={(e) => setVal(e.target.value)} placeholder="Nombre de mots"
+            className={`flex-1 px-4 py-2.5 rounded-full border ${T.line} ${T.card} ${T.ink} outline-none text-sm`}
+            onKeyDown={(e) => { if (e.key === "Enter" && val !== "") check(); }} />
+          <Button accent={accent} onClick={check} disabled={val === ""}>Vérifier</Button>
+        </div>
+      ) : (
+        <div className="rounded-xl border p-4" style={parseInt(val, 10) === item.n ? OKS : BADS}>
+          <p className={`font-bold ${T.ink}`}>{parseInt(val, 10) === item.n ? `✅ Oui : ${item.n} mot(s) !` : `❌ Non : la bonne réponse est ${item.n}.`}</p>
+          <p className={`text-sm ${T.sub} mt-1`}>{item.why}</p>
+          <div className="mt-3"><Button accent={accent} onClick={next}>{i + 1 >= order.length ? "Voir mon résultat" : "Suivant →"}</Button></div>
+        </div>
+      )}
+      <p className={`text-xs mt-4 ${T.faint}`}>💡 Au DS, tu ne comptes qu'à la fin, après ta première reformulation au brouillon.</p>
+    </Card>
+  );
+}
+
+
+/* ---- Module d'analyse de textes ---- */
+function Textes({ onScore }) {
+  const [order, setOrder] = useState(() => shuffle(TEXTES.map((_, k) => k)));
+  const [i, setI] = useState(0);
+  const [revealed, setRevealed] = useState(false);
+  const [judged, setJudged] = useState(null);
+  const [known, setKnown] = useState(0);
+  const [done, setDone] = useState(false);
+  const accent = ACCENTS.texte.hex;
+  const t = TEXTES[order[i]];
+
+  const judge = (ok) => {
+    setJudged(ok);
+    const nk = known + (ok ? 1 : 0);
+    setKnown(nk);
+    if (i + 1 >= order.length) { onScore("texte", Math.round((nk / order.length) * 100)); setDone(true); }
+  };
+  const next = () => { setI(i + 1); setRevealed(false); setJudged(null); };
+  const restart = () => {
+    setOrder(shuffle(TEXTES.map((_, k) => k)));
+    setI(0); setRevealed(false); setJudged(null); setKnown(0); setDone(false);
+  };
+
+  if (done) {
+    const pct = Math.round((known / order.length) * 100);
+    return (
+      <Card>
+        <Eyebrow>Bilan de l'analyse de textes</Eyebrow>
+        <div className="flex items-center gap-6 mt-4 mb-5">
+          <Ring value={pct} size={72} color={accent} />
+          <p className={`text-lg font-bold ${T.ink}`}>✅ {known} textes analysés · 🔁 {order.length - known} à revoir</p>
+        </div>
+        <Button accent={accent} onClick={restart}>Rejouer les textes</Button>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <ModHead accent={accent} left={t.focus} right={`${i + 1} / ${order.length}`} />
+      <p className={`text-sm font-bold ${T.ink} mb-3`}>{t.auteur} <span className="font-normal italic">— {t.oeuvre}</span></p>
+      <blockquote className={`rounded-2xl border ${T.line} ${T.soft} p-5 text-[15px] leading-relaxed italic ${T.ink} mb-4`}>
+        {t.texte}
+      </blockquote>
+      <div className="rounded-xl border p-4 text-sm" style={{ borderColor: accent + "55", background: accent + "12" }}>
+        <b className={T.ink}>🎯 Ta mission (au brouillon !)</b>
+        <p className={`${T.sub} mt-1`}>{t.consigne}</p>
+      </div>
+      {!revealed ? (
+        <div className="mt-5"><Button accent={accent} onClick={() => setRevealed(true)}>J'ai cherché au brouillon → voir la réponse</Button></div>
+      ) : (
+        <div className="mt-5">
+          <div className="rounded-xl border p-4 text-sm" style={OKS}>
+            <b className={T.ink}>Correction</b>
+            <div className="space-y-2 mt-2">
+              {t.reponse.map((r, k) => <p key={k} className={`${T.sub} leading-relaxed`}>• {r}</p>)}
+            </div>
+            <p className={`italic pt-3 mt-3 border-t ${T.line} ${T.sub}`}>💡 {t.tip}</p>
+          </div>
+          {judged === null ? (
+            <div className="flex gap-3 mt-5">
+              <Button tone="ghost" className="flex-1" onClick={() => judge(true)}>✅ J'avais trouvé l'essentiel</Button>
+              <Button accent={accent} className="flex-1" onClick={() => judge(false)}>🔁 À revoir</Button>
+            </div>
+          ) : (
+            <div className="mt-5">
+              <Button accent={accent} onClick={next}>{i + 1 >= order.length ? "Voir mon bilan" : "Texte suivant →"}</Button>
+            </div>
+          )}
+        </div>
+      )}
+    </Card>
+  );
+}
+
+/* ---- Accueil ---- */
+function Home({ scores, go, reset }) {
+  const modules = [
+    { key: "flash", icon: "🃏", desc: "16 cartes : définition, principes, énonciation, pièges, comptage. Ordre mélangé à chaque série." },
+    { key: "quiz", icon: "🎯", desc: "11 QCM sur les vrais pièges du DS — la méthode en 4 étapes incluse. Explication à chaque réponse." },
+    { key: "vf", icon: "⚖️", desc: "10 affirmations sur les règles du jeu : rapide, redoutable, efficace. Ordre mélangé." },
+    { key: "count", icon: "🔢", desc: "L'entraîneur au décompte des mots : « aujourd'hui », « c'est-à-dire », « y a-t-il »…" },
+    { key: "texte", icon: "📄", desc: "4 textes d'auteurs : énonciation, thèse, connecteurs, ironie. Cherche au brouillon, puis vérifie." },
+  ];
+  return (
+    <div className="space-y-5">
+      <Card>
+        <Eyebrow>Objectif avant le DS</Eyebrow>
+        <h2 className={`text-xl font-bold tracking-tight ${T.ink} mt-2 mb-4`}>Vise au moins 80 % de réussite sur chaque module</h2>
+        <ol className={`space-y-2.5 text-sm ${T.sub} list-decimal pl-5`}>
+          <li><b className={T.ink}>Le rappel actif</b> — cherche la réponse de mémoire avant de la voir : c'est ce qui ancre.</li>
+          <li><b className={T.ink}>Le feedback expliqué</b> — chaque erreur vient avec le pourquoi : c'est ce qui la transforme en apprentissage.</li>
+          <li><b className={T.ink}>L'auto-évaluation</b> — « je savais / à revoir » t'apprend à connaître tes points faibles et à les rejouer en priorité.</li>
+        </ol>
+        <div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold rounded-full px-4 py-2" style={{ ...WARNS, color: T.warn }}>
+          ⚠️ Règle d'or : ne regarde jamais la réponse avant d'avoir essayé.
+        </div>
+        <p className={`text-sm ${T.sub} mt-5`}>La veille du DS, rejoue uniquement tes cartes « à revoir » et le quiz : deux sessions espacées fixent mieux en mémoire qu'une seule longue révision.</p>
+      </Card>
+      <div className="flex items-center gap-2 mb-3">
+        <h2 className={`text-xl font-bold tracking-tight ${T.ink}`}>Choisis ton module de révision</h2>
+      </div>
+      <div className="grid md:grid-cols-2 gap-4">
+        {modules.map((m) => (
+          <button key={m.key} onClick={() => go(m.key)}
+            className={`text-left rounded-2xl border ${T.line} ${T.card} ${T.shadow} p-6 transition-all hover:-translate-y-0.5 active:scale-[0.99] ${m.key === "texte" ? "md:col-span-2" : ""}`}>
+            <div className="flex items-start justify-between gap-3">
+              <span className="grid place-items-center w-12 h-12 rounded-2xl text-xl" style={{ background: ACCENTS[m.key].hex + "1F" }}>{m.icon}</span>
+              <Ring value={scores[m.key] ?? 0} size={48} stroke={5} color={ACCENTS[m.key].hex} />
+            </div>
+            <p className={`text-lg font-bold mt-3.5 ${T.ink}`}>{ACCENTS[m.key].name}</p>
+            <p className={`text-sm mt-1 leading-relaxed ${T.sub}`}>{m.desc}</p>
+            <p className="text-sm font-bold mt-3" style={{ color: ACCENTS[m.key].hex }}>Commencer →</p>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ============ APP (Design Editorial) ============ */
+function App() {
+  const { scores, save, reset } = useProgress();
+  const [view, setView] = useState("home");
+
+  const progress = useMemo(() => {
+    const keys = Object.keys(ACCENTS);
+    const vals = keys.map((k) => scores[k] ?? 0);
+    return Math.round(vals.reduce((a, b) => a + b, 0) / keys.length);
+  }, [scores]);
+
+  const best = (k, v) => save(k, Math.max(v, scores[k] ?? 0));
+  const go = (k) => {
+    setView(k);
+    if (k !== "home") track("module", k);
+    try { window.scrollTo({ top: 0 }); } catch (e) {}
+  };
+
+  useEffect(() => {
+    try {
+      if (!window.sessionStorage.getItem("contraction-visited")) {
+        window.sessionStorage.setItem("contraction-visited", "1");
+        track("ouverture");
+      }
+    } catch (e) { track("ouverture"); }
+  }, []);
+
+  return (
+    <div className={`min-h-screen ${T.page} ${T.font}`}>
+      <div className="max-w-2xl mx-auto px-5 py-10 md:py-14">
+        <header className="flex items-start justify-between gap-6 mb-9">
+          <div>
+            <Eyebrow>1ʳᵉ ST2S3 · Français</Eyebrow>
+            <h1 className={`text-[26px] md:text-3xl font-bold tracking-tight ${T.ink} mt-2 leading-tight`}>
+              Réviser la contraction<br className="hidden md:block" /> de texte
+            </h1>
+          </div>
+          <div className="flex flex-col items-center gap-1.5 pt-1">
+            <Ring value={progress} color={T.hex} />
+            <span className={`text-[11px] font-semibold ${T.faint}`}>progression</span>
+          </div>
+        </header>
+        <Tabs view={view} setView={go} />
+        {view === "home" && <Home scores={scores} go={go} reset={reset} />}
+        {view === "flash" && <Flashcards onScore={(k, v) => best(k, v)} />}
+        {view === "quiz" && <Quiz onScore={(k, v) => best(k, v)} />}
+        {view === "vf" && <VraiFaux onScore={(k, v) => best(k, v)} />}
+        {view === "count" && <Comptage onScore={(k, v) => best(k, v)} />}
+        {view === "texte" && <Textes onScore={(k, v) => best(k, v)} />}
+        <footer className="mt-12 flex items-center justify-end">
+          <button onClick={reset} className={`text-xs font-semibold ${T.faint} hover:opacity-70 underline underline-offset-4`}>Réinitialiser ma progression</button>
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" nonce="IvPNvHq2NJQ/jpwJZmdWZg==" data-cf-beacon='{"version":"2024.11.0","token":"36b4216ae2dc4d5488c249161e71fe1e","spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>
