@@ -17,9 +17,9 @@
 /* ============ MESURE D'AUDIENCE (Google Apps Script) ============
    Remplace la valeur ci-dessous par l'URL de déploiement de ton script.
    Tant qu'elle n'est pas remplacée, l'app fonctionne, sans mesure. */
-const TRACK_URL = "COLLE_ICI_L_URL_DEPLOIEMENT_APPS_SCRIPT";
+const TRACK_URL = "https://script.google.com/macros/s/AKfycby71W20SPB9mh8JAuzRtm_UkNr8BrbvNrRCqZVSaO8Szv_qsgjNaaaJl0pTeyMrNcO_Uw/exec";
 function track(event, module) {
-  if (!TRACK_URL || TRACK_URL.indexOf("COLLE_ICI") === 0) return;
+  if (!TRACK_URL || TRACK_URL.indexOf("https://script.google.com/macros/s/AKfycby71W20SPB9mh8JAuzRtm_UkNr8BrbvNrRCqZVSaO8Szv_qsgjNaaaJl0pTeyMrNcO_Uw/exec") === 0) return;
   try {
     let u = TRACK_URL + "?e=" + encodeURIComponent(event);
     if (module) u += "&m=" + encodeURIComponent(module);
