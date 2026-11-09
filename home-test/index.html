@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Applications pédagogiques de français — 1ère ST2S" />
+<title>Français 1ère ST2S — Apps pédagogiques</title>
+<style>
+  /* ===== Standards modernes : oklch, nesting natif, :has(), @layer ===== */
+  @layer reset, base, layout, components, utilities;
+
+  @layer reset {
+    *, *::before, *::after { box-sizing: border-box; margin: 0; }
+    img, svg { display: block; max-width: 100%; }
+  }
+
+  @layer base {
+    :root {
+      --encre: oklch(0.25 0.02 260);
+      --papier: oklch(0.97 0.01 85);
+      --accent: oklch(0.55 0.16 25);
+      --accent-frais: oklch(0.55 0.13 200);
+      --carte: white;
+      --rayon: 1rem;
+      --ombre: 0 1px 2px oklch(0 0 0 / 0.06), 0 8px 24px oklch(0 0 0 / 0.08);
+      font-family: "Segoe UI", system-ui, sans-serif;
+      color: var(--encre);
+      background: var(--papier);
+      line-height: 1.6;
+      scroll-behavior: smooth;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --encre: oklch(0.93 0.01 260);
+        --papier: oklch(0.19 0.02 260);
+        --carte: oklch(0.25 0.02 260);
+        --ombre: 0 1px 2px oklch(0 0 0 / 0.4), 0 8px 24px oklch(0 0 0 / 0.35);
+      }
+    }
+
+    body { min-height: 100dvh; }
+
+    h1, h2, h3 { line-height: 1.15; text-wrap: balance; }
+    p { text-wrap: pretty; }
+
+    /* Liens : soulignement moderne, couleur d'accent */
+    a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-decoration-color: color-mix(in oklch, currentColor 40%, transparent);
+      text-underline-offset: 0.2em;
+      &:hover { text-decoration-color: currentColor; }
+    }
+  }
+
+  @layer layout {
+    .conteneur {
+      max-width: 72rem;
+      margin-inline: auto;
+      padding-inline: clamp(1rem, 4vw, 2.5rem);
+    }
+
+    header.hero {
+      padding-block: clamp(3rem, 8vw, 5.5rem) clamp(2rem, 5vw, 3.5rem);
+      background:
+        radial-gradient(60rem 30rem at 85% -20%, color-mix(in oklch, var(--accent) 18%, transparent), transparent),
+        radial-gradient(50rem 25rem at 0% 120%, color-mix(in oklch, var(--accent-frais) 14%, transparent), transparent);
+
+      & h1 {
+        font-size: clamp(2rem, 5vw, 3.4rem);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+      & .surtitre {
+        text-transform: uppercase;
+        letter-spacing: 0.25em;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: color-mix(in oklch, var(--encre) 65%, transparent);
+      }
+      & .accroche {
+        margin-top: 1rem;
+        max-width: 42rem;
+        font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+        color: color-mix(in oklch, var(--encre) 82%, transparent);
+      }
+    }
+
+    main { padding-block: clamp(2rem, 5vw, 4rem); }
+
+    section { margin-block-end: clamp(2.5rem, 6vw, 4.5rem); }
+  }
+
+  @layer components {
+    .intro-sequence {
+      max-width: 46rem;
+      & h2 { font-size: clamp(1.5rem, 3vw, 2rem); margin-block-end: 0.4rem; }
+      & .periode {
+        display: inline-block;
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--accent);
+      }
+    }
+
+    .grille-oeuvres {
+      display: grid;
+      gap: clamp(1rem, 2.5vw, 1.75rem);
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+      margin-block-start: 1.5rem;
+    }
+
+    /* ===== Carte œuvre : container queries ===== */
+    .carte {
+      container-type: inline-size;
+      background: var(--carte);
+      border-radius: var(--rayon);
+      box-shadow: var(--ombre);
+      overflow: clip;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 8px oklch(0 0 0 / 0.08), 0 16px 40px oklch(0 0 0 / 0.14);
+      }
+
+      /* :has() — la carte réagit si son illustration est survolée */
+      &:has(.vignette:hover) .carte-titre { text-decoration: underline var(--accent); text-underline-offset: 0.25em; }
+
+      & .vignette {
+        aspect-ratio: 16 / 9;
+        background: var(--teinte, color-mix(in oklch, var(--accent) 12%, var(--papier)));
+        display: grid;
+        place-items: center;
+
+        & svg { width: 100%; height: 100%; }
+      }
+
+      & .carte-corps { padding: 1.1rem 1.25rem 1.35rem; display: flex; flex-direction: column; gap: 0.5rem; flex-grow: 1; }
+
+      & .carte-titre { font-size: 1.08rem; font-weight: 700; }
+
+      & .carte-auteur { font-size: 0.85rem; font-style: italic; color: color-mix(in oklch, var(--encre) 65%, transparent); }
+
+      & .carte-desc { font-size: 0.92rem; margin-block-start: 0.35rem; }
+
+      & .badge {
+        align-self: flex-start;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 0.25em 0.7em;
+        border-radius: 999px;
+
+        &.integrale { background: color-mix(in oklch, var(--accent) 16%, transparent); color: var(--accent); }
+        &.cursive { background: color-mix(in oklch, var(--accent-frais) 16%, transparent); color: var(--accent-frais); }
+      }
+
+      /* En grand conteneur : disposition horizontale */
+      @container (min-width: 26rem) {
+        & { flex-direction: row; align-items: stretch; }
+        & .vignette { width: 42%; aspect-ratio: auto; flex-shrink: 0; }
+        & .carte-corps { justify-content: center; }
+      }
+    }
+
+    /* Note séquence entre les cartes intégrale et cursives */
+    .note-sequence {
+      margin-block-start: 1.75rem;
+      padding: 1rem 1.25rem;
+      border-radius: var(--rayon);
+      border-inline-start: 3px solid var(--accent);
+      background: color-mix(in oklch, var(--accent) 6%, var(--carte));
+      font-size: 0.95rem;
+    }
+
+    footer {
+      padding-block: 2.5rem;
+      border-block-start: 1px solid color-mix(in oklch, var(--encre) 15%, transparent);
+      font-size: 0.88rem;
+      color: color-mix(in oklch, var(--encre) 65%, transparent);
+      text-align: center;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="conteneur">
+    <p class="surtitre">Français · 1<sup>re</sup> ST2S · Année 2026–2027</p>
+    <h1>Les apps du cours de français</h1>
+    <p class="accroche">
+      Des applications pédagogiques pour progresser tout au long de l'année :
+      révisions des œuvres, entraînements à l'oral, grammaire et méthodes
+      pour préparer le bac de français.
+    </p>
+  </div>
+</header>
+
+<main class="conteneur">
+
+  <!-- ================= SÉQUENCE 1 ================= -->
+  <section id="sequence-1">
+    <div class="intro-sequence">
+      <p class="periode">Septembre – Octobre</p>
+      <h2>La littérature d'idées du XVI<sup>e</sup> au XVIII<sup>e</sup> siècle</h2>
+      <p>Parcours : « Un nouvel univers s'est offert à mes yeux »</p>
+    </div>
+
+    <div class="grille-oeuvres">
+      <article class="carte" style="--teinte: oklch(0.92 0.04 50);">
+        <div class="vignette">
+          <svg viewBox="0 0 320 180" role="img" aria-label="Illustration : lettre à la plume et paysage andin">
+            <rect width="320" height="180" fill="oklch(0.94 0.03 60)"/>
+            <path d="M0 130 Q80 100 160 120 T320 105 V180 H0 Z" fill="oklch(0.75 0.1 145)"/>
+            <path d="M40 180 L110 90 L150 130 L200 60 L280 180 Z" fill="oklch(0.55 0.1 145)" opacity="0.85"/>
+            <path d="M170 180 L215 100 L250 135 L295 70 L340 180 Z" fill="oklch(0.45 0.09 145)" opacity="0.7"/>
+            <circle cx="265" cy="40" r="22" fill="oklch(0.9 0.09 85)"/>
+            <g transform="rotate(-6 110 95)">
+              <rect x="55" y="55" width="110" height="80" rx="4" fill="oklch(0.98 0.01 90)"/>
+              <path d="M65 70 h90 M65 85 h70 M65 100 h85 M65 115 h50" stroke="oklch(0.6 0.05 50)" stroke-width="2" stroke-linecap="round"/>
+            </g>
+            <path d="M150 140 C170 150 190 135 205 145" stroke="oklch(0.3 0.05 50)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M150 140 l-8 -4 m8 4 l-3 -9" stroke="oklch(0.3 0.05 50)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="carte-corps">
+          <span class="badge integrale">Œuvre intégrale</span>
+          <h3 class="carte-titre">Lettres d'une Péruvienne</h3>
+          <p class="carte-auteur">Françoise de Graffigny, 1747</p>
+          <p class="carte-desc">Zilia, jeune Péruvienne, découvre l'Europe par le regard émerveillé et critique de ses lettres.</p>
+        </div>
+      </article>
+
+      <article class="carte" style="--teinte: oklch(0.9 0.04 300);">
+        <div class="vignette">
+          <svg viewBox="0 0 320 180" role="img" aria-label="Illustration : silhouette profil, regard tourné">
+            <rect width="320" height="180" fill="oklch(0.9 0.04 310)"/>
+            <circle cx="160" cy="210" r="120" fill="oklch(0.82 0.05 310)" opacity="0.6"/>
+            <path d="M185 60 a42 42 0 1 0 0.1 0 Z M120 180 C125 130 145 105 185 100 L195 180 Z" fill="oklch(0.4 0.1 310)"/>
+            <path d="M225 95 q20 25 5 45" stroke="oklch(0.35 0.1 310)" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <circle cx="196" cy="82" r="3" fill="oklch(0.95 0.01 310)"/>
+            <path d="M250 30 q10 12 0 24" stroke="oklch(0.6 0.08 310)" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.8"/>
+          </svg>
+        </div>
+        <div class="carte-corps">
+          <span class="badge cursive">Lecture cursive</span>
+          <h3 class="carte-titre">Ourika</h3>
+          <p class="carte-auteur">Claire de Duras, 1823</p>
+          <p class="carte-desc">Une jeune femme noire élevée dans la noblesse française du XIX<sup>e</sup> siècle, entre exclusion et quête d'identité.</p>
+        </div>
+      </article>
+
+      <article class="carte" style="--teinte: oklch(0.9 0.06 20);">
+        <div class="vignette">
+          <svg viewBox="0 0 320 180" role="img" aria-label="Illustration : silhouette avec foulard, motif géométrique">
+            <rect width="320" height="180" fill="oklch(0.9 0.06 25)"/>
+            <rect x="20" y="20" width="280" height="140" fill="none" stroke="oklch(0.7 0.1 25)" stroke-width="2" rx="8"/>
+            <rect x="32" y="32" width="60" height="60" fill="oklch(0.82 0.08 25)"/>
+            <circle cx="160" cy="70" r="30" fill="oklch(0.35 0.1 25)"/>
+            <path d="M110 180 C112 120 130 100 160 100 C190 100 208 120 210 180 Z" fill="oklch(0.45 0.11 25)"/>
+            <path d="M128 62 q32 -20 64 0 l-8 18 q-24 -14 -48 0 Z" fill="oklch(0.8 0.1 90)"/>
+            <circle cx="150" cy="64" r="2.5" fill="oklch(0.95 0.01 25)"/>
+            <circle cx="170" cy="64" r="2.5" fill="oklch(0.95 0.01 25)"/>
+            <path d="M245 40 l40 40 M285 40 l-40 40" stroke="oklch(0.7 0.1 25)" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="carte-corps">
+          <span class="badge cursive">Lecture cursive</span>
+          <h3 class="carte-titre">Americanah</h3>
+          <p class="carte-auteur">Chimamanda Ngozi Adichie, 2013</p>
+          <p class="carte-desc">Ifememu, entre Nigeria et États-Unis, confronte la question de la race et de l'identité contemporaine.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= SÉQUENCE 2 ================= -->
+  <section id="sequence-2">
+    <div class="intro-sequence">
+      <p class="periode">Novembre – Janvier</p>
+      <h2>La poésie du XIX<sup>e</sup> au XXI<sup>e</sup> siècle</h2>
+      <p>Parcours : « Émancipations créatrices »</p>
+    </div>
+
+    <div class="grille-oeuvres">
+      <article class="carte" style="--teinte: oklch(0.9 0.05 220);">
+        <div class="vignette">
+          <svg viewBox="0 0 320 180" role="img" aria-label="Illustration : bateau ivre sur vagues stylisées">
+            <rect width="320" height="180" fill="oklch(0.9 0.05 230)"/>
+            <circle cx="250" cy="45" r="24" fill="oklch(0.85 0.1 85)"/>
+            <path d="M0 120 Q40 100 80 120 T160 120 T240 120 T320 120 V180 H0 Z" fill="oklch(0.65 0.1 230)"/>
+            <path d="M0 145 Q40 128 80 145 T160 145 T240 145 T320 145 V180 H0 Z" fill="oklch(0.55 0.1 235)"/>
+            <path d="M110 118 l100 0 l-12 16 h-76 Z" fill="oklch(0.3 0.03 230)"/>
+            <path d="M160 118 V58 M160 58 l34 22 l-34 22" fill="oklch(0.98 0.01 230)" stroke="oklch(0.3 0.03 230)" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="carte-corps">
+          <span class="badge integrale">Œuvre intégrale</span>
+          <h3 class="carte-titre">Cahiers de Douai</h3>
+          <p class="carte-auteur">Arthur Rimbaud, 1871</p>
+          <p class="carte-desc">Le poète en révolte : « Je est un autre » — une poésie qui bouscule les formes et le monde.</p>
+        </div>
+      </article>
+
+      <article class="carte" style="--teinte: oklch(0.88 0.07 130);">
+        <div class="vignette">
+          <svg viewBox="0 0 320 180" role="img" aria-label="Illustration : calligramme, cage et oiseau">
+            <rect width="320" height="180" fill="oklch(0.88 0.07 130)"/>
+            <circle cx="160" cy="85" r="52" fill="none" stroke="oklch(0.4 0.1 130)" stroke-width="2.5" stroke-dasharray="4 6"/>
+            <circle cx="160" cy="85" r="38" fill="oklch(0.95 0.02 130)" opacity="0.85"/>
+            <path d="M150 78 c6 -14 22 -12 24 2 c8 -4 14 6 6 12 l-24 10 l-2 -14 Z" fill="oklch(0.35 0.09 130)"/>
+            <path d="M148 74 l14 4" stroke="oklch(0.8 0.02 130)" stroke-width="1.5"/>
+            <path d="M155 100 l-6 10" stroke="oklch(0.35 0.09 130)" stroke-width="2" stroke-linecap="round"/>
+            <path d="M60 40 h14 m-7 0 v14 M70 40 h14 m-7 0 v14" stroke="oklch(0.55 0.1 130)" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+            <path d="M246 120 h14 m-7 0 v-14" stroke="oklch(0.55 0.1 130)" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+          </svg>
+        </div>
+        <div class="carte-corps">
+          <span class="badge cursive">Lecture cursive</span>
+          <h3 class="carte-titre">Alcools</h3>
+          <p class="carte-auteur">Guillaume Apollinaire, 1913</p>
+          <p class="carte-desc">De « Zone » au « Pont Mirabeau » : la modernité poétique, entre tradition et inventions formelles.</p>
+        </div>
+      </article>
+
+      <article class="carte" style="--teinte: oklch(0.9 0.04 90);">
+        <div class="vignette">
+          <svg viewBox="0 0 320 180" role="img" aria-label="Illustration : objets du quotidien, parti pris des choses">
+            <rect width="320" height="180" fill="oklch(0.9 0.04 90)"/>
+            <ellipse cx="160" cy="150" rx="120" ry="14" fill="oklch(0.8 0.04 90)"/>
+            <path d="M120 95 h80 l-10 55 h-60 Z" fill="oklch(0.75 0.05 90)" transform="rotate(4 160 120)"/>
+            <path d="M200 95 h14 v55 h-14 Z" fill="oklch(0.7 0.05 90)" transform="rotate(4 160 120)"/>
+            <circle cx="105" cy="120" r="26" fill="oklch(0.85 0.06 60)"/>
+            <rect x="215" y="95" width="42" height="34" rx="4" fill="oklch(0.7 0.03 90)" transform="rotate(-6 235 112)"/>
+            <path d="M85 60 h70 M60 45 h40 M200 50 h55 M230 70 h35" stroke="oklch(0.65 0.05 90)" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
+          </svg>
+        </div>
+        <div class="carte-corps">
+          <span class="badge cursive">Lecture cursive</span>
+          <h3 class="carte-titre">Le Parti pris des choses</h3>
+          <p class="carte-auteur">Francis Ponge, 1942</p>
+          <p class="carte-desc">Le monde muet des objets devient parole : huîtres, savon, pain… une poésie de l'attention.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= SÉQUENCE 3 ================= -->
+  <section id="sequence-3">
+    <div class="intro-sequence">
+      <p class="periode">Janvier – Mars</p>
+      <h2>Le roman et le récit du Moyen Âge au XXI<sup>e</sup> siècle</h2>
+      <p>Parcours : « Héroïsme et amour »</p>
+    </div>
+
+    <div class="grille-oeuvres">
+      <article class="carte" style="--teinte: oklch(0.88 0.06 50);">
+        <div class="vignette">
+          <svg viewBox="0 0 320 180" role="img" aria-label="Illustration : chevalier et charrette médiévale">
+            <rect width="320" height="180" fill="oklch(0.88 0.06 50)"/>
+            <path d="M60 160 q100 -30 200 0" stroke="oklch(0.7 0.06 50)" stroke-width="2" fill="none" opacity="0.6"/>
+            <rect x="150" y="115" width="60" height="14" rx="4" fill="oklch(0.55 0.1 40)"/>
+            <circle cx="140" cy="122" r="6" fill="oklch(0.4 0.05 50)"/>
+            <circle cx="220" cy="122" r="6" fill="oklch(0.4 0.05 50)"/>
+            <rect x="212" y="98" width="30" height="20" rx="3" fill="oklch(0.6 0.09 40)"/>
+            <path d="M238 78 h14 v22 h-14 Z" fill="oklch(0.6 0.09 40)"/>
+            <path d="M240 78 v-16 l10 6 Z" fill="oklch(0.7 0.1 40)"/>
+            <path d="M232 92 a8 8 0 0 1 8 8 h-16 a8 8 0 0 1 8 -8 Z" fill="oklch(0.3 0.02 50)"/>
+            <path d="M240 78 h14" stroke="oklch(0.3 0.02 50)" stroke-width="2"/>
+            <path d="M252 80 v-20 m0 20 l14 4" stroke="oklch(0.75 0.01 50)" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M60 60 l30 30 M90 60 l-30 30" stroke="oklch(0.65 0.08 40)" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+          </svg>
+        </div>
+        <div class="carte-corps">
+          <span class="badge integrale">Œuvre intégrale</span>
+          <h3 class="carte-titre">Le Chevalier de la charrette</h3>
+          <p class="carte-auteur">Chrétien de Troyes, XII<sup>e</sup> siècle</p>
+          <p class="carte-desc">Lancelot, le chevalier qui accepte l'humiliante charrette par amour pour la reine Guenièvre.</p>
+        </div>
+      </article>
+
+      <article class="carte" style="--teinte: oklch(0.88 0.07 20);">
+        <div class="vignette">
+          <svg viewBox="0 0 320 180" role="img" aria-label="Illustration : lyre, casque et silhouette grecque">
+            <rect width="320" height="180" fill="oklch(0.88 0.07 30)"/>
+            <circle cx="160" cy="90" r="70" fill="oklch(0.82 0.08 30)" opacity="0.5"/>
+            <path d="M130 160 C133 105 145 85 165 82 L172 160 Z" fill="oklch(0.4 0.09 35)"/>
+            <circle cx="168" cy="60" r="24" fill="oklch(0.4 0.09 35)"/>
+            <path d="M132 100 q36 -34 60 6 M138 86 q28 -26 48 4" stroke="oklch(0.9 0.04 85)" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path d="M138 86 m0 0 l-6 18" stroke="oklch(0.9 0.04 85)" stroke-width="3" stroke-linecap="round"/>
+            <path d="M150 76 l-5 16" stroke="oklch(0.9 0.04 85)" stroke-width="3" stroke-linecap="round"/>
+            <path d="M248 70 q14 10 0 26 q-12 -14 0 -26 Z" fill="oklch(0.6 0.1 35)"/>
+            <path d="M252 55 q10 14 0 44" stroke="oklch(0.55 0.1 35)" stroke-width="3" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="carte-corps">
+          <span class="badge cursive">Lecture cursive</span>
+          <h3 class="carte-titre">Le Chant d'Achille</h3>
+          <p class="carte-auteur">Madeline Miller, 2011</p>
+          <p class="carte-desc">L'épopée d'Achille racontée par Patrocle : amitié, destin et héritage de la guerre de Troie.</p>
+        </div>
+      </article>
+
+      <article class="carte" style="--teinte: oklch(0.9 0.05 140);">
+        <div class="vignette">
+          <svg viewBox="0 0 320 180" role="img" aria-label="Illustration : croix dans paysage américain, Atala">
+            <rect width="320" height="180" fill="oklch(0.9 0.05 140)"/>
+            <circle cx="70" cy="45" r="20" fill="oklch(0.88 0.09 85)"/>
+            <path d="M0 140 Q60 110 120 130 T240 125 T320 135 V180 H0 Z" fill="oklch(0.65 0.09 140)"/>
+            <path d="M240 135 V90 M240 90 h34 m-17 -0 v-18 m-17 18 v-10 h34 v10" stroke="oklch(0.4 0.02 140)" stroke-width="5" stroke-linecap="round"/>
+            <path d="M30 180 l35 -60 l25 40 l20 -30 l30 50 Z" fill="oklch(0.5 0.1 140)" opacity="0.8"/>
+            <path d="M150 180 l25 -40 l15 25 l15 -20 l25 35 Z" fill="oklch(0.45 0.1 140)" opacity="0.7"/>
+          </svg>
+        </div>
+        <div class="carte-corps">
+          <span class="badge cursive">Lecture cursive</span>
+          <h3 class="carte-titre">Atala</h3>
+          <p class="carte-auteur">François-René de Chateaubriand, 1801</p>
+          <p class="carte-desc">Amour tragique et nature sublime dans les forêts du Nouveau Monde : le roman du mal du siècle.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= SÉQUENCE 4 ================= -->
+  <section id="sequence-4">
+    <div class="intro-sequence">
+      <p class="periode">Mars – Juin</p>
+      <h2>Le théâtre du XVII<sup>e</sup> au XXI<sup>e</sup> siècle</h2>
+      <p>Parcours : « Les jeux du cœur et de la parole »</p>
+    </div>
+
+    <div class="grille-oeuvres">
+      <article class="carte" style="--teinte: oklch(0.88 0.05 300);">
+        <div class="vignette">
+          <svg viewBox="0 0 320 180" role="img" aria-label="Illustration : rideaux de théâtre et masques">
+            <rect width="320" height="180" fill="oklch(0.3 0.06 300)"/>
+            <path d="M0 0 h70 q-15 90 10 180 H40 Z" fill="oklch(0.55 0.15 20)"/>
+            <path d="M320 0 h-70 q15 90 -10 180 h40 Z" fill="oklch(0.55 0.15 20)"/>
+            <path d="M70 0 q-12 90 8 180 h164 q20 -90 8 -180 Z" fill="oklch(0.45 0.14 25)"/>
+            <ellipse cx="130" cy="85" rx="22" ry="28" fill="oklch(0.92 0.01 90)"/>
+            <path d="M118 78 a6 4 0 1 0 0.1 0 Z M142 78 a6 4 0 1 0 0.1 0 Z" fill="oklch(0.3 0.06 300)"/>
+            <path d="M118 95 q12 8 24 0" stroke="oklch(0.3 0.06 300)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <ellipse cx="190" cy="85" rx="22" ry="28" fill="oklch(0.92 0.01 90)"/>
+            <path d="M178 80 h24 M178 90 h24" stroke="oklch(0.3 0.06 300)" stroke-width="2.5" stroke-linecap="round"/>
+            <rect x="0" y="0" width="320" height="12" fill="oklch(0.2 0.04 300)"/>
+          </svg>
+        </div>
+        <div class="carte-corps">
+          <span class="badge integrale">Œuvre intégrale</span>
+          <h3 class="carte-titre">On ne badine pas avec l'amour</h3>
+          <p class="carte-auteur">Alfred de Musset, 1834</p>
+          <p class="carte-desc">Perdican et Camille : un duel de cœurs et de mots qui déraille en drame romantique.</p>
+        </div>
+      </article>
+
+      <article class="carte" style="--teinte: oklch(0.9 0.04 200);">
+        <div class="vignette">
+          <svg viewBox="0 0 320 180" role="img" aria-label="Illustration : éventail et chapeau XVIIe siècle, école des femmes">
+            <rect width="320" height="180" fill="oklch(0.9 0.04 200)"/>
+            <circle cx="160" cy="130" r="55" fill="oklch(0.82 0.05 200)" opacity="0.5"/>
+            <path d="M160 95 m0 -4 a58 58 0 0 1 41 17 l-14 14 a38 38 0 0 0 -27 -11 Z" fill="oklch(0.95 0.02 90)" stroke="oklch(0.5 0.05 200)" stroke-width="2"/>
+            <path d="M160 95 L196 112 M160 95 L190 85 M160 95 L170 70" stroke="oklch(0.5 0.05 200)" stroke-width="1.5"/>
+            <circle cx="160" cy="95" r="3.5" fill="oklch(0.6 0.1 20)"/>
+            <path d="M235 55 a30 30 0 1 0 0.1 0 Z" fill="oklch(0.75 0.05 90)"/>
+            <path d="M205 85 q30 -10 60 0 M235 55 v-12" stroke="oklch(0.5 0.05 200)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M223 45 q12 -8 24 0" stroke="oklch(0.6 0.1 20)" stroke-width="2" fill="none"/>
+          </svg>
+        </div>
+        <div class="carte-corps">
+          <span class="badge cursive">Lecture cursive</span>
+          <h3 class="carte-titre">L'École des femmes</h3>
+          <p class="carte-auteur">Molière, 1662</p>
+          <p class="carte-desc">Arnolphe veut façonner une épouse obéissante : la comédie de la tyrannie amoureuse défaite.</p>
+        </div>
+      </article>
+
+      <article class="carte" style="--teinte: oklch(0.9 0.05 260);">
+        <div class="vignette">
+          <svg viewBox="0 0 320 180" role="img" aria-label="Illustration : lustre et invitation au château">
+            <rect width="320" height="180" fill="oklch(0.88 0.04 260)"/>
+            <rect x="0" y="150" width="320" height="30" fill="oklch(0.75 0.04 260)"/>
+            <path d="M0 150 h320" stroke="oklch(0.55 0.03 260)" stroke-width="2"/>
+            <path d="M160 0 v22" stroke="oklch(0.5 0.03 260)" stroke-width="3"/>
+            <path d="M160 22 l-35 18 h70 Z" fill="oklch(0.6 0.15 85)"/>
+            <path d="M125 42 h70 v8 h-70 Z" fill="oklch(0.7 0.1 85)"/>
+            <circle cx="143" cy="62" r="5" fill="oklch(0.9 0.08 85)"/>
+            <circle cx="160" cy="66" r="5" fill="oklch(0.9 0.08 85)"/>
+            <circle cx="177" cy="62" r="5" fill="oklch(0.9 0.08 85)"/>
+            <path d="M50 60 l30 30 M80 60 l-30 30 M240 60 l30 30 M270 60 l-30 30" stroke="oklch(0.55 0.03 260)" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+            <path d="M60 130 h40 M220 130 h40" stroke="oklch(0.5 0.03 260)" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="carte-corps">
+          <span class="badge cursive">Lecture cursive</span>
+          <h3 class="carte-titre">L'Invitation au château</h3>
+          <p class="carte-auteur">Jean Anouilh, 1947</p>
+          <p class="carte-desc">Un bal, des masques, un jeu social cruel : la comédie noire du mensonge mondain.</p>
+        </div>
+      </article>
+    </div>
+
+    <p class="note-sequence">
+      Les œuvres intégrales donnent lieu à des <strong>lectures linéaires</strong> (oral EAF) et servent les exercices
+      de <strong>contraction de texte</strong> et d'<strong>essai</strong> (écrit EAF). Une lecture cursive au choix
+      par parcours sera présentée à l'<strong>entretien de l'oral</strong>.
+    </p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="conteneur">
+    <p>Site des applications pédagogiques — Français 1<sup>re</sup> ST2S · Lycée Honoré d'Urfé · 2026–2027</p>
+  </div>
+</footer>
+
+</body>
+</html>
