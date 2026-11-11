@@ -45,6 +45,8 @@ button{font:inherit}
 .viewport::-webkit-scrollbar-thumb{background:#b3ad9e;border-radius:20px;border:3px solid #eeebe2}
 .grid{width:calc(var(--labw) + var(--ax));position:relative}
 .lane{display:flex;min-height:96px;border-bottom:1px solid #edeade;position:relative}
+.lane.trans{min-height:190px}
+.lane.trans .hint{bottom:12px}
 .lane:last-child{border-bottom:0}
 .lab{position:sticky;left:0;z-index:14;flex:0 0 var(--labw);width:var(--labw);padding:16px 18px;background:var(--card);border-right:1px solid #d5d0c2;box-shadow:6px 0 14px #22302d08}
 .lab .no{display:block;font-size:9.5px;font-weight:800;letter-spacing:.2em;color:#a09a8a;text-transform:uppercase}
@@ -63,7 +65,7 @@ button{font:inherit}
 .mo:first-child{border-left:0}
 .mo b{font:600 15px 'Fraunces',serif;display:block}
 .mo small{font-size:9.5px;color:#9a958a}
-.vac{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(135deg,#c9b9895e 0 5px,transparent 5px 11px);pointer-events:none;z-index:1}
+.vac{position:absolute;top:0;bottom:0;background:rgba(181,161,120,.10);border-left:1px dashed #c9b58c;border-right:1px dashed #c9b58c;pointer-events:none;z-index:1}
 .msep{position:absolute;top:0;bottom:0;width:1px;background:#e8e3d5;z-index:1;pointer-events:none}
 .nowbar{position:absolute;top:0;bottom:0;width:2px;background:var(--terra);z-index:9;pointer-events:none}
 .nowbar::before{content:"";position:absolute;top:0;left:-4px;width:10px;height:10px;border-radius:50%;background:var(--terra)}
@@ -87,7 +89,8 @@ button{font:inherit}
 .track:hover{filter:brightness(.88);transform:translateY(-2px)}
 .track.plan{height:22px;z-index:2;opacity:.15;pointer-events:none}
 .track.fin{background:var(--done)}
-.track.nowc{background:var(--now)}
+.track.nowc{background:var(--now);animation:glow 2.2s ease-in-out infinite}
+@keyframes glow{0%,100%{box-shadow:0 4px 9px #22302d15}50%{box-shadow:0 0 0 5px #c2603f2b,0 4px 13px #c2603f30}}
 .track.grev{background:var(--soon);color:#4c5c67}
 .hint{position:absolute;left:12px;bottom:7px;font-size:9px;color:#a49d8d;z-index:2}
 
@@ -333,12 +336,13 @@ const mil=lane('','milestones',`<span class="no">01 · Jalons</span><h3>Dates à
 decorate(mil);
 const used=[];
 MK.forEach(m=>{
-  const left=X(m.d);let col=0;
-  for(let k=0;k<4;k++){if(((used[k]??-999))+150<=left){col=k;break;}else col=k;}
+  const left=X(m.d);
+  let col=used.findIndex(u=>u+158<=left);
+  if(col<0){col=used.length}
   used[col]=left;
   const b=document.createElement('button');b.type='button';
   b.className='mk'+(m.exam?' exam':'')+(m.insp?' insp':'')+(m.today?' today':'');
-  b.style.left=left+'px';b.style.top=(10+col*62)+'px';
+  b.style.left=left+'px';b.style.top=(10+col*64)+'px';
   const short=m.t.replace(/\s*\([^)]*\)/g,'');
   b.innerHTML=`<span class="pin" style="${m.c?'background:'+m.c+';outline-color:'+m.c:''}"></span><span class="stem"></span><span class="box"><span class="d">${m.d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short'})}</span><span class="t"></span></span>`;
   b.querySelector('.t').textContent=short.length>40?short.slice(0,38)+'…':short;
@@ -348,9 +352,9 @@ MK.forEach(m=>{
 });
 
 /* Séquences */
-const TRACKS=[[52,96,52,98],[52,96],[52],[52],[52,96,52,100]];
+const TRACKS=[[52,96,52,100],[52,96],[52],[52],[10,54,98,142]];
 LANES.forEach((L,i)=>{
-  const cv=lane('',L.state==='Toute l\'année'?'':'',`<span class="no">${L.no}</span><h3>${L.title}</h3><p>${L.sub}</p>
+  const cv=lane('',i===4?'trans':'',`<span class="no">${L.no}</span><h3>${L.title}</h3><p>${L.sub}</p>
     <span class="tag"><span class="dot" style="background:${L.col}"></span>${L.state}</span>`);
   decorate(cv);
   L.rows.forEach((r,j)=>{
@@ -360,7 +364,7 @@ LANES.forEach((L,i)=>{
     el.style.left=X(r.s)+'px';
     el.style.width=Math.max(6,X(r.e)-X(r.s))+'px';
     el.style.top=(isPlan?8:TRACKS[i][Math.min(j,L.rows.length-1)]+(j>=2&&i===0?2:0))+'px';
-    if(!isPlan&&i===4)el.style.height='29px';
+    if(!isPlan&&i===4)el.style.height='30px';
     el.style.background=isPlan?L.col:r.c;
     el.textContent=isPlan?'':(r.t||'');
     const tip=isPlan?r.tip:(L.trackTip&&L.rows.length===1?L.trackTip:r.tip);
