@@ -1,409 +1,994 @@
 <!doctype html>
 <html lang="fr">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Test 2 — Menu & portraits</title>
-<style>
-  @layer reset, base, layout, components;
-
-  @layer reset {
-    *, *::before, *::after { box-sizing: border-box; margin: 0; }
-    img, svg { display: block; max-width: 100%; }
-    ul { list-style: none; padding: 0; }
-  }
-
-  @layer base {
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description"
+    content="Frise chronologique de la progression annuelle de fran&#231;ais en premi&#232;re ST2S">
+  <title>Notre ann&#233;e en fran&#231;ais | Premi&#232;re ST2S</title>
+  <style>
     :root {
-      --encre: oklch(0.25 0.02 260);
-      --papier: oklch(0.97 0.01 85);
-      --accent: oklch(0.55 0.16 25);
-      --carte: white;
-      --rayon: 1rem;
-      --ombre: 0 1px 2px oklch(0 0 0 / 0.06), 0 8px 24px oklch(0 0 0 / 0.08);
-      font-family: "Segoe UI", system-ui, sans-serif;
-      color: var(--encre);
-      background: var(--papier);
-      line-height: 1.6;
-      scroll-behavior: smooth;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --encre: oklch(0.93 0.01 260);
-        --papier: oklch(0.19 0.02 260);
-        --carte: oklch(0.25 0.02 260);
-      }
-    }
-    h1, h2 { line-height: 1.15; text-wrap: balance; }
-    a { color: inherit; text-decoration: none; }
-  }
-
-  @layer layout {
-    .conteneur { max-width: 64rem; margin-inline: auto; padding-inline: clamp(1rem, 4vw, 2rem); }
-    main { padding-block: clamp(2rem, 6vw, 4rem); display: grid; gap: 2.5rem; }
-  }
-
-  @layer components {
-
-    /* ================= MENU ================= */
-    nav.principal {
-      position: sticky; top: 0; z-index: 10;
-      background: color-mix(in oklch, var(--carte) 85%, transparent);
-      backdrop-filter: blur(10px);
-      border-block-end: 1px solid oklch(0 0 0 / 0.08);
-
-      & .conteneur { display: flex; align-items: center; gap: 0.5rem; min-height: 3.5rem; }
-
-      & .marque {
-        font-weight: 800; letter-spacing: -0.01em; margin-inline-end: auto;
-        font-size: 1.05rem;
-        & span { color: var(--accent); }
-      }
-
-      & ul.menu { display: flex; gap: 0.25rem; }
-
-      & li.has-submenu { position: relative; }
-
-      & .item {
-        display: inline-block;
-        padding: 0.45rem 0.85rem;
-        border-radius: 999px;
-        font-weight: 600;
-        font-size: 0.95rem;
-        transition: background 0.2s ease, color 0.2s ease;
-        cursor: pointer;
-
-        &:hover, &:focus-visible { background: color-mix(in oklch, var(--accent) 12%, transparent); outline: none; }
-      }
-
-      & li.actif .item { background: var(--accent); color: white; }
-
-      & .item[aria-haspopup] {
-        display: inline-flex; align-items: center; gap: 0.35rem;
-        &::after {
-          content: ""; width: 0.45em; height: 0.45em;
-          border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
-          transform: rotate(45deg) translateY(-0.12em);
-          transition: transform 0.25s ease;
-        }
-      }
-
-      /* ---- Le sous-menu : fermé par défaut ---- */
-      & ul.sous-menu {
-        position: absolute; top: calc(100% + 0.4rem); left: 0;
-        min-width: 13rem;
-        background: var(--carte);
-        border-radius: var(--rayon);
-        box-shadow: var(--ombre);
-        padding: 0.5rem;
-        display: grid; gap: 0.15rem;
-
-        /* état replié : invisible mais présent pour l'accessibilité clavier */
-        opacity: 0; visibility: hidden; transform: translateY(-6px);
-        transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
-
-        & a {
-          display: block; padding: 0.5rem 0.75rem; border-radius: 0.6rem;
-          font-size: 0.92rem;
-          &:hover, &:focus-visible { background: color-mix(in oklch, var(--accent) 12%, transparent); outline: none; }
-        }
-      }
-
-      /* ---- Développement au survol (ou au focus clavier via :focus-within) ---- */
-      & li.has-submenu:hover ul.sous-menu,
-      & li.has-submenu:focus-within ul.sous-menu {
-        opacity: 1; visibility: visible; transform: translateY(0);
-      }
-      & li.has-submenu:hover .item[aria-haspopup]::after { transform: rotate(225deg) translateY(-0.12em); }
+      --paper: #f6f2eb;
+      --ink: #242a2c;
+      --muted: #666e70;
+      --line: #a48d72;
+      --accent: #a55436;
+      --soft: #e9dfd0
     }
 
-    /* ================= BURGER 3 LIGNES ================= */
-    .burger {
-      display: none;               /* caché sur desktop */
-      cursor: pointer;
-      width: 2.6rem; height: 2.6rem;
-      border-radius: 0.7rem;
-      place-items: center;
-      flex-direction: column;
-      gap: 0.35rem;
-      transition: background 0.2s ease;
-
-      &:hover { background: color-mix(in oklch, var(--accent) 12%, transparent); }
-
-      /* les 3 lignes */
-      & span {
-        width: 1.4rem; height: 2px;
-        background: var(--encre);
-        border-radius: 2px;
-        transition: transform 0.3s ease, opacity 0.3s ease, width 0.3s ease;
-        transform-origin: center;
-      }
+    * {
+      box-sizing: border-box
     }
 
-    /* État ouvert (checkbox cochée) : les 3 lignes deviennent une croix
-       — détection via :has() sur le nav */
-    nav.principal:has(.nav-toggle:checked) .burger span:nth-child(1) { transform: translateY(calc(0.35rem + 2px)) rotate(45deg); }
-    nav.principal:has(.nav-toggle:checked) .burger span:nth-child(2) { opacity: 0; width: 0; }
-    nav.principal:has(.nav-toggle:checked) .burger span:nth-child(3) { transform: translateY(calc(-0.35rem - 2px)) rotate(-45deg); }
-
-    /* ================= MOBILE ================= */
-    @media (max-width: 48rem) {
-      .burger { display: flex; }
-
-      nav.principal .conteneur { flex-wrap: wrap; min-height: 0; padding-block: 0.6rem; }
-
-      /* le menu : plein largeur, déroulé sous la barre */
-      nav.principal ul.menu {
-        display: grid;
-        flex-basis: 100%;
-        gap: 0.25rem;
-        padding-block: 0.5rem 1rem;
-
-        /* fermé par défaut, animé en hauteur */
-        max-height: 0;
-        opacity: 0; visibility: hidden;
-        transition: max-height 0.4s ease, opacity 0.3s ease, visibility 0.3s;
-      }
-
-      nav.principal:has(.nav-toggle:checked) ul.menu {
-        max-height: 25rem;
-        opacity: 1; visibility: visible;
-      }
-
-      nav.principal ul.menu { overflow: hidden; }
-
-      nav.principal .item { display: block; width: 100%; padding: 0.7rem 0.9rem; border-radius: 0.7rem; }
-
-      /* sur mobile : pas de survol — le sous-menu Méthodo est déplié en permanence
-         dans le panneau, indenté */
-      nav.principal li.has-submenu ul.sous-menu {
-        position: static; opacity: 1; visibility: visible; transform: none;
-        box-shadow: none; background: transparent;
-        padding: 0 0 0 1.1rem;
-        & a { font-size: 0.88rem; color: color-mix(in oklch, var(--encre) 80%, transparent); }
-      }
+    html {
+      scroll-behavior: smooth
     }
 
-    /* ================= CONTENU ================= */
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Segoe UI, Arial, sans-serif;
+      line-height: 1.55
+    }
+
+    a {
+      color: inherit
+    }
+
+    a:focus-visible {
+      outline: 3px solid #ad5a3b;
+      outline-offset: 4px
+    }
+
+    header {
+      background: #202b2c;
+      color: #f7f2e8;
+      position: relative;
+      overflow: hidden
+    }
+
+    header:after {
+      content: '';
+      position: absolute;
+      width: 580px;
+      height: 580px;
+      right: -120px;
+      top: -240px;
+      border: 1px solid #ffffff24;
+      border-radius: 50%;
+      box-shadow: 0 0 0 65px #ffffff08, 0 0 0 145px #ffffff08;
+      pointer-events: none
+    }
+
     .hero {
-      & h1 { font-size: clamp(1.7rem, 4.5vw, 2.6rem); font-weight: 800; letter-spacing: -0.02em; }
-      & p.accroche { margin-block-start: 0.75rem; max-width: 42rem; font-size: 1.05rem; color: color-mix(in oklch, var(--encre) 80%, transparent); }
-      & .surtitre { text-transform: uppercase; letter-spacing: 0.25em; font-size: 0.78rem; font-weight: 600; color: color-mix(in oklch, var(--encre) 60%, transparent); }
+      max-width: 1140px;
+      margin: auto;
+      padding: 92px 32px 88px;
+      position: relative;
+      z-index: 1
     }
 
-    /* ================= CARROUSEL (Swiper) ================= */
-    /* Styles essentiels de Swiper (le cœur de sa CSS, inline) */
-    .carrousel-wrap { position: relative; }
-
-    .swiper { overflow: hidden; padding-bottom: 2.5rem; }
-    .swiper-wrapper { display: flex; }
-    .swiper-slide {
-      flex-shrink: 0; width: 100%;
-      display: grid; place-items: center;
+    .kicker,
+    .eyebrow {
+      font-size: .76rem;
+      font-weight: 800;
+      letter-spacing: .19em;
+      text-transform: uppercase
     }
 
-    /* Repli natif : si le CDN est bloqué (bac à sable, offline), le carrousel
-       reste utilisable grâce à scroll-snap — moderne et sans JS */
-    .swiper:not(.swiper-initialized) .swiper-wrapper {
+    .kicker {
+      color: #e4bba0
+    }
+
+    .hero h1 {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(3.5rem, 9vw, 7rem);
+      font-weight: 400;
+      letter-spacing: -.065em;
+      line-height: .98;
+      margin: 21px 0 27px;
+      max-width: 850px
+    }
+
+    .hero h1 em {
+      font-weight: 400;
+      color: #e9b69c
+    }
+
+    .hero p {
+      max-width: 565px;
+      color: #d7dbd7;
+      font-size: 1.06rem
+    }
+
+    .hero .micro {
+      margin-top: 45px;
+      display: flex;
+      gap: 28px;
+      flex-wrap: wrap;
+      font-size: .83rem;
+      color: #c8d4ce
+    }
+
+    .hero .micro b {
+      color: #f3ddca;
+      font-size: 1.15rem;
+      margin-right: 5px
+    }
+
+    .topnav {
+      position: sticky;
+      top: 0;
+      background: #fbf9f4ef;
+      backdrop-filter: blur(14px);
+      z-index: 20;
+      border-bottom: 1px solid #d8d0c5
+    }
+
+    .navinner {
+      max-width: 1140px;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 30px;
       overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      scrollbar-width: thin;
-    }
-    .swiper:not(.swiper-initialized) .swiper-slide { scroll-snap-align: center; }
-    .swiper:not(.swiper-initialized) .swiper-nav,
-    .swiper:not(.swiper-initialized) .swiper-pagination { display: none; }
-
-    /* Flèches précédent / suivant */
-    .swiper-nav {
-      position: absolute; top: 40%; z-index: 2;
-      width: 2.6rem; height: 2.6rem;
-      border: none; border-radius: 50%;
-      background: var(--carte); box-shadow: var(--ombre);
-      color: var(--encre);
-      display: grid; place-items: center;
-      font-size: 1.3rem; line-height: 1;
-      cursor: pointer;
-      transition: transform 0.2s ease, color 0.2s ease;
-
-      &:hover { color: var(--accent); transform: scale(1.08); }
-    }
-    .swiper-nav.precedent { inset-inline-start: 0.5rem; }
-    .swiper-nav.suivant { inset-inline-end: 0.5rem; }
-
-    /* Pagination : points cliquables */
-    .swiper-pagination {
-      position: absolute; inset-inline: 0; bottom: 0.75rem;
-      display: flex; justify-content: center; gap: 0.5rem;
-    }
-    .swiper-pagination-bullet {
-      width: 0.6rem; height: 0.6rem; border-radius: 50%;
-      background: color-mix(in oklch, var(--encre) 30%, transparent);
-      transition: transform 0.2s ease, background 0.2s ease;
-      cursor: pointer; border: none;
-    }
-    .swiper-pagination-bullet-active {
-      background: var(--accent); transform: scale(1.35);
+      scrollbar-width: thin
     }
 
-    /* Les cartes portrait dans les slides */
-    .swiper-slide .portrait { width: min(100%, 22rem); }
+    .brand {
+      font-family: Georgia, serif;
+      font-weight: bold;
+      margin-right: auto;
+      white-space: nowrap
+    }
 
-    .portrait {
-      background: var(--carte); border-radius: var(--rayon); box-shadow: var(--ombre); overflow: clip;
-      & figure { position: relative; }
-      & .cadre-photo {
-        aspect-ratio: 4 / 5;
-        background: linear-gradient(135deg, color-mix(in oklch, var(--accent) 15%, var(--papier)), color-mix(in oklch, var(--accent) 5%, var(--papier)));
-        display: grid; place-items: center; overflow: hidden;
-        /* l'image remplit le cadre, quoi qu'il arrive */
-        & img { width: 100%; height: 100%; object-fit: cover; object-position: top; filter: sepia(0.25) contrast(1.05); }
-      }
-      & figcaption {
-        position: absolute; inset-inline: 0; bottom: 0;
-        padding: 1.5rem 1.25rem 1rem;
-        background: linear-gradient(transparent, oklch(0 0 0 / 0.65));
-        color: white;
-        & .nom { font-weight: 700; font-size: 1.05rem; }
-        & .credit { font-size: 0.72rem; opacity: 0.85; margin-block-start: 0.15rem; }
-      }
-      & .bio { padding: 1rem 1.25rem 1.35rem; font-size: 0.93rem; }
+    .navinner a {
+      text-decoration: none;
+      white-space: nowrap;
+      font-size: .8rem;
+      padding: 7px 12px;
+      border-radius: 20px;
+      color: #5c6463
+    }
+
+    .navinner a:hover,
+    .navinner a.active {
+      background: #e8ddd0;
+      color: #563726
+    }
+
+    .section-head {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 70px 32px 22px;
+      text-align: center
+    }
+
+    .section-head h2 {
+      font: 400 clamp(2rem, 4.5vw, 3.5rem) Georgia, serif;
+      letter-spacing: -.045em;
+      margin: 12px 0
+    }
+
+    .section-head p {
+      color: var(--muted);
+      margin: auto;
+      max-width: 630px
+    }
+
+    .timeline {
+      position: relative;
+      max-width: 1120px;
+      margin: 5px auto 0;
+      padding: 36px 32px 90px;
+      isolation: isolate
+    }
+
+    .trail {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none
+    }
+
+    .trail .segment {
+      position: absolute;
+      width: 37%;
+      height: 25%;
+      border: 5px solid transparent;
+      border-left-color: #cfbda7;
+      border-radius: 50% 0 0 50%;
+      left: 47%;
+      transform: translateX(-50%)
+    }
+
+    .trail .segment:nth-child(1) {
+      top: 0;
+      left: 50%;
+      border-left: 0;
+      border-right-color: #cfbda7;
+      border-radius: 0 50% 50% 0
+    }
+
+    .trail .segment:nth-child(2) {
+      top: 25%;
+      left: 46%
+    }
+
+    .trail .segment:nth-child(3) {
+      top: 50%;
+      left: 50%;
+      border-left: 0;
+      border-right-color: #cfbda7;
+      border-radius: 0 50% 50% 0
+    }
+
+    .trail .segment:nth-child(4) {
+      top: 75%;
+      left: 46%
+    }
+
+    .chapter {
+      min-height: 610px;
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 85px 1fr;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 16px;
+      scroll-margin-top: 95px
+    }
+
+    .chapter:last-of-type {
+      margin-bottom: 0
+    }
+
+    .chapter:nth-of-type(odd) .lead {
+      grid-column: 1;
+      grid-row: 1
+    }
+
+    .chapter:nth-of-type(odd) .support {
+      grid-column: 3;
+      grid-row: 1
+    }
+
+    .chapter:nth-of-type(even) .lead {
+      grid-column: 3;
+      grid-row: 1
+    }
+
+    .chapter:nth-of-type(even) .support {
+      grid-column: 1;
+      grid-row: 1
+    }
+
+    .marker {
+      grid-column: 2;
+      grid-row: 1;
+      justify-self: center;
+      align-self: center;
+      width: 66px;
+      height: 66px;
+      border-radius: 50%;
+      border: 8px solid var(--paper);
+      display: grid;
+      place-items: center;
+      background: #303e3d;
+      color: #fff;
+      font: 22px Georgia, serif;
+      box-shadow: 0 0 0 2px #a9937b;
+      z-index: 1
+    }
+
+    .chapter.ochre {
+      --chapter: #a65d3a;
+      --shade: #e6d2bb
+    }
+
+    .chapter.blue {
+      --chapter: #416b82;
+      --shade: #cfdee1
+    }
+
+    .chapter.rose {
+      --chapter: #9c6159;
+      --shade: #ead0c8
+    }
+
+    .chapter.violet {
+      --chapter: #685b83;
+      --shade: #ded7e8
+    }
+
+    .chapter .marker {
+      background: var(--chapter)
+    }
+
+    .lead {
+      background: #fffdf9;
+      border: 1px solid #e2d9ce;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 14px 42px #463b3115;
+      position: relative
+    }
+
+    .hero-image {
+      height: 245px;
+      background: linear-gradient(130deg, var(--shade), #d3c9bb);
+      position: relative;
+      overflow: hidden
+    }
+
+    .hero-image img {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+      filter: saturate(.83);
+      transition: transform .5s
+    }
+
+    .lead:hover .hero-image img {
+      transform: scale(1.04)
+    }
+
+    .hero-image:after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, #191a1888, transparent 45%);
+      pointer-events: none
+    }
+
+    .image-caption {
+      position: absolute;
+      bottom: 14px;
+      left: 20px;
+      color: white;
+      font-size: .7rem;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+      z-index: 1
+    }
+
+    .lead-body {
+      padding: 27px 28px 30px
+    }
+
+    .lead h3 {
+      font: 400 clamp(1.7rem, 2.6vw, 2.35rem) Georgia, serif;
+      line-height: 1.12;
+      letter-spacing: -.035em;
+      margin: 14px 0 9px
+    }
+
+    .dates {
+      font-weight: 800;
+      color: var(--chapter);
+      font-size: .73rem;
+      letter-spacing: .12em
+    }
+
+    .byline {
+      font-size: .85rem;
+      color: #706f6b;
+      margin: 0 0 15px
+    }
+
+    .lead-body p {
+      font-size: .92rem
+    }
+
+    .support {
+      padding: 16px 0
+    }
+
+    .supereyebrow {
+      color: var(--chapter);
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .13em;
+      font-weight: 800
+    }
+
+    .support h2 {
+      font: 400 clamp(2rem, 3.2vw, 2.75rem) Georgia, serif;
+      line-height: 1.08;
+      letter-spacing: -.04em;
+      margin: 12px 0
+    }
+
+    .support .intent {
+      color: #606562;
+      font-size: .94rem;
+      margin-bottom: 22px;
+      max-width: 360px
+    }
+
+    .parcours {
+      border-left: 3px solid var(--chapter);
+      padding: 8px 0 8px 17px;
+      font-family: Georgia, serif;
+      font-style: italic;
+      font-size: 1.09rem;
+      margin: 23px 0
+    }
+
+    .minorlist {
+      display: grid;
+      gap: 12px
+    }
+
+    .minor {
+      display: grid;
+      grid-template-columns: 77px 1fr;
+      gap: 14px;
+      align-items: center;
+      background: #ffffffbd;
+      border: 1px solid #e6dbcd;
+      padding: 9px;
+      border-radius: 9px
+    }
+
+    .thumb {
+      height: 80px;
+      background: var(--shade);
+      overflow: hidden;
+      border-radius: 5px
+    }
+
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 30%
+    }
+
+    .minor h4 {
+      margin: 0 0 3px;
+      font: 600 1rem Georgia, serif
+    }
+
+    .minor small {
+      display: block;
+      color: #77726b;
+      font-size: .72rem
+    }
+
+    .minor p {
+      margin: 5px 0 0;
+      font-size: .77rem;
+      line-height: 1.3;
+      color: #545957
+    }
+
+    .tag {
+      display: inline-block;
+      border-radius: 20px;
+      padding: 4px 10px;
+      background: var(--shade);
+      font-size: .67rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: #403a35
+    }
+
+    .endcap {
+      text-align: center;
+      max-width: 600px;
+      margin: 10px auto 100px;
+      padding: 30px
+    }
+
+    .endcap h2 {
+      font: 400 2.4rem Georgia, serif;
+      margin: 0 0 12px
+    }
+
+    .endcap p {
+      color: #696965
+    }
+
+    .note {
+      background: #ede6dc;
+      border-top: 1px solid #dacfbe;
+      padding: 35px 30px;
+      font-size: .85rem;
+      color: #605b55
+    }
+
+    .note-inner {
+      max-width: 1000px;
+      margin: auto
+    }
+
+    .note h3 {
+      font: 400 1.4rem Georgia, serif;
+      margin: 0 0 8px
+    }
+
+    .source {
+      font-size: .72rem;
+      color: #77726e
     }
 
     footer {
-      padding-block: 2rem; text-align: center; font-size: 0.85rem;
-      color: color-mix(in oklch, var(--encre) 60%, transparent);
-      border-block-start: 1px solid oklch(0 0 0 / 0.08);
+      padding: 30px;
+      background: #202b2c;
+      color: #d4d8d1;
+      text-align: center;
+      font-size: .8rem
     }
-  }
-</style>
+
+    #scrollProgress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: #a65d3a;
+      width: 0;
+      z-index: 40;
+      pointer-events: none
+    }
+
+    .fallback {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #55473b;
+      opacity: .35;
+      font: italic 24px Georgia, serif
+    }
+
+    .thumb .fallback {
+      font-size: 15px
+    }
+
+    .hero-image:not(.image-indisponible) .fallback,
+    .thumb:not(.image-indisponible) .fallback {
+      display: none
+    }
+
+    @media(max-width:840px) {
+      .timeline {
+        padding: 10px 22px 60px
+      }
+
+      .trail {
+        display: none
+      }
+
+      .chapter,
+      .chapter:nth-of-type(even),
+      .chapter:nth-of-type(odd) {
+        display: grid;
+        grid-template-columns: 38px minmax(0, 1fr);
+        gap: 0 13px;
+        min-height: 0;
+        margin-bottom: 55px;
+        align-items: start
+      }
+
+      .chapter:before {
+        content: '';
+        position: absolute;
+        left: 18px;
+        top: 32px;
+        bottom: -60px;
+        border-left: 3px solid #cfbda7
+      }
+
+      .chapter:last-of-type:before {
+        bottom: 0
+      }
+
+      .chapter .marker {
+        grid-column: 1;
+        grid-row: 1;
+        width: 38px;
+        height: 38px;
+        border: 4px solid var(--paper);
+        font-size: 14px;
+        margin-top: 8px;
+        position: relative;
+        z-index: 2
+      }
+
+      .chapter:nth-of-type(odd) .support,
+      .chapter:nth-of-type(even) .support {
+        grid-column: 2;
+        grid-row: 1;
+        padding: 0 0 20px
+      }
+
+      .chapter:nth-of-type(odd) .lead,
+      .chapter:nth-of-type(even) .lead {
+        grid-column: 2;
+        grid-row: 2
+      }
+
+      .support h2 {
+        font-size: 2rem
+      }
+
+      .support .intent {
+        max-width: unset
+      }
+
+      .minorlist {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .minor {
+        grid-template-columns: 60px 1fr;
+        gap: 8px
+      }
+
+      .thumb {
+        height: 66px
+      }
+
+      .hero-image {
+        height: 260px
+      }
+
+      .navinner {
+        padding: 10px 15px
+      }
+
+      .brand {
+        display: none
+      }
+    }
+
+    @media(max-width:570px) {
+      .hero {
+        padding: 65px 22px
+      }
+
+      .hero h1 {
+        font-size: 3.85rem
+      }
+
+      .section-head {
+        padding: 46px 21px 14px
+      }
+
+      .minorlist {
+        grid-template-columns: 1fr
+      }
+
+      .support h2 {
+        font-size: 1.85rem
+      }
+
+      .hero-image {
+        height: 220px
+      }
+
+      .lead-body {
+        padding: 21px
+      }
+
+      .timeline {
+        padding: 10px 14px 40px
+      }
+
+      .chapter {
+        grid-template-columns: 35px minmax(0, 1fr)
+      }
+
+      .chapter:before {
+        left: 17px
+      }
+
+      .chapter .marker {
+        width: 35px;
+        height: 35px
+      }
+
+      .navinner a {
+        padding: 7px
+      }
+    }
+
+    @media(prefers-reduced-motion:reduce) {
+      html {
+        scroll-behavior: auto
+      }
+
+      * {
+        transition: none !important
+      }
+    }
+  </style>
 </head>
+
 <body>
-
-<nav class="principal">
-  <div class="conteneur">
-    <a class="marque" href="#">Français <span>1<sup>re</sup> ST2S</span></a>
-
-    <!-- Interrupteur burger : checkbox cachée + label stylé en 3 lignes (CSS pur) -->
-    <input type="checkbox" id="nav-toggle" class="nav-toggle" hidden />
-    <label for="nav-toggle" class="burger" aria-label="Ouvrir le menu">
-      <span></span><span></span><span></span>
-    </label>
-
-    <ul class="menu">
-      <li class="actif"><a class="item" href="#">Home</a></li>
-      <li><a class="item" href="#">Graffigny</a></li>
-      <li><a class="item" href="#">Rimbaud</a></li>
-      <li class="has-submenu">
-        <a class="item" aria-haspopup="true" href="#">Méthodo</a>
-        <ul class="sous-menu">
-          <li><a href="#">Contraction de texte</a></li>
-          <li><a href="#">Essai</a></li>
-          <li><a href="#">Commentaire</a></li>
-          <li><a href="#">Explication linéaire</a></li>
-        </ul>
-      </li>
-    </ul>
-  </div>
-</nav>
-
-<main class="conteneur">
-
-  <section class="hero">
-    <p class="surtitre">Test 2 — menu & images</p>
-    <h1>Page d'essai du menu de navigation</h1>
-    <p class="accroche">
-      Les rubriques sont pour l'instant inactives : survolez « Méthodo » pour voir
-      le sous-menu se développer, et admirez les vrais portraits des deux auteurs
-      de nos premières séquences.
-    </p>
-  </section>
-
-  <section class="carrousel-wrap">
-
-    <!-- Carrousel Swiper : structure swiper > swiper-wrapper > swiper-slide -->
-    <div class="swiper" id="portraits">
-      <div class="swiper-wrapper">
-
-        <div class="swiper-slide">
-          <article class="portrait">
-            <figure>
-              <div class="cadre-photo">
-                <img
-                  src="assets/img/graffigny.jpg"
-                  alt="Portrait présumé de Françoise de Graffigny, par Victorine-Angélique-Amélie Rumilly d'après Louis Tocqué (château de Versailles)"
-                  loading="lazy" />
-              </div>
-              <figcaption>
-                <p class="nom">Françoise de Graffigny</p>
-                <p class="credit">Portrait présumé par Rumilly d'après Tocqué — Versailles · domaine public</p>
-              </figcaption>
-            </figure>
-            <p class="bio">
-              1695–1758. Femme de lettres lorraine, autrice des <em>Lettres d'une Péruvienne</em> (1747),
-              œuvre intégrale de notre première séquence : « Un nouvel univers s'est offert à mes yeux ».
-            </p>
-          </article>
-        </div>
-
-        <div class="swiper-slide">
-          <article class="portrait">
-            <figure>
-              <div class="cadre-photo">
-                <img
-                  src="assets/img/rimbaud.jpg"
-                  alt="Portrait d'Arthur Rimbaud photographié par Étienne Carjat, vers 1872"
-                  loading="lazy" />
-              </div>
-              <figcaption>
-                <p class="nom">Arthur Rimbaud</p>
-                <p class="credit">Photographie d'Étienne Carjat, 1872 · domaine public</p>
-              </figcaption>
-            </figure>
-            <p class="bio">
-              1854–1891. Le poète de Charleville, auteur des <em>Cahiers de Douai</em> (1871),
-              œuvre intégrale de notre deuxième séquence : « Émancipations créatrices ».
-            </p>
-          </article>
-        </div>
-
-      </div>
-
-      <!-- Commandes -->
-      <button class="swiper-nav precedent" aria-label="Portrait précédent">‹</button>
-      <button class="swiper-nav suivant" aria-label="Portrait suivant">›</button>
-      <div class="swiper-pagination"></div>
+  <div id="scrollProgress" aria-hidden="true"></div>
+  <header>
+    <div class="hero">
+      <div class="kicker">Lyc&#233;e Honor&#233; d'Urf&#233; &nbsp; / &nbsp; Premi&#232;re ST2S &nbsp; / &nbsp;
+        2026-2027</div>
+      <h1>Une ann&#233;e,<br><em>mille regards</em><br>sur le monde.</h1>
+      <p>De la d&#233;couverte de l'autre &#224; la puissance des mots, suivons le fil de notre ann&#233;e de
+        fran&#231;ais. Quatre objets d'&#233;tude, douze &#339;uvres et autant de fa&#231;ons d'explorer le monde.</p>
+      <div class="micro"><span><b>04</b> objets d'&#233;tude</span><span><b>12</b> &#339;uvres &#224;
+          d&#233;couvrir</span><span><b>01</b> ann&#233;e pour progresser</span></div>
     </div>
+  </header>
+  <nav class="topnav" aria-label="Navigation de l'ann&#233;e">
+    <div class="navinner"><span class="brand">Le fil de l'ann&#233;e</span><a href="#debut">D&#233;part</a><a
+        href="#chapitre-1">01 &#183; Litt&#233;rature d'id&#233;es</a><a href="#chapitre-2">02 &#183; Po&#233;sie</a><a
+        href="#chapitre-3">03 &#183; Roman</a><a href="#chapitre-4">04 &#183; Th&#233;&#226;tre</a></div>
+  </nav>
+  <main>
+    <div id="debut" class="section-head"><span class="eyebrow">Votre parcours litt&#233;raire</span>
+      <h2>Le fil de notre ann&#233;e</h2>
+      <p>Descendez le long de la frise : &#224; chaque &#233;tape, une &#339;uvre au c&#339;ur de nos cours et deux
+        lectures pour prolonger la d&#233;couverte.</p>
+    </div>
+    <div class="timeline">
+      <div class="trail" aria-hidden="true">
+        <div class="segment"></div>
+        <div class="segment"></div>
+        <div class="segment"></div>
+        <div class="segment"></div>
+      </div>
+      <section class="chapter ochre" id="chapitre-1"
+        aria-label="S&#233;quence 1 : La litt&#233;rature d&#x27;id&#233;es">
+        <article class="lead">
+          <div class="hero-image"><img class=""
+              src="https://commons.wikimedia.org/wiki/Special:FilePath/Portrait%20of%20Francoise%20de%20Graffigny%20by%20Maurice%20Quentin%20de%20La%20Tour.jpg?width=1000"
+              alt="Lettres d&#x27;une P&#233;ruvienne" loading="lazy" decoding="async"
+              onerror="this.style.display='none';this.parentElement.classList.add('image-indisponible')"><span
+              class="fallback">Lettres d&#x27;une P&#233;ruvienne</span><span class="image-caption">&#338;uvre
+              int&#233;grale</span></div>
+          <div class="lead-body"><span class="tag">&#338;uvre au programme</span>
+            <h3>Lettres d&#x27;une P&#233;ruvienne</h3>
+            <p class="byline">Fran&#231;oise de Graffigny &#183; 1747</p>
+            <p>La voix de Zilia, &#233;trang&#232;re &#224; la soci&#233;t&#233; fran&#231;aise, r&#233;v&#232;le ce que
+              l&#x27;habitude nous emp&#234;che de voir.</p>
+          </div>
+        </article>
+        <div class="marker" aria-hidden="true">I</div>
+        <div class="support">
+          <div class="dates">SEPTEMBRE &#8212; OCTOBRE &nbsp; &#183; &nbsp; &#201;TAPE 01</div><span
+            class="supereyebrow">La litt&#233;rature d&#x27;id&#233;es &nbsp; / &nbsp; Du XVIe au XVIIIe
+            si&#232;cle</span>
+          <h2>Regarder le monde autrement</h2>
+          <p class="intent">Changer de regard, questionner les habitudes et d&#233;couvrir la force critique de la
+            fiction.</p>
+          <div class="parcours">Parcours : &#171; Un nouvel univers s&#x27;est offert &#224; mes yeux &#187;</div>
+          <div class="supereyebrow" style="margin:22px 0 12px">Lectures cursives au choix</div>
+          <div class="minorlist">
+            <div class="minor">
+              <div class="thumb"><img class=""
+                  src="https://commons.wikimedia.org/wiki/Special:FilePath/Portrait%20de%20Claire%20de%20Duras.jpg?width=1000"
+                  alt="Ourika" loading="lazy" decoding="async"
+                  onerror="this.style.display='none';this.parentElement.classList.add('image-indisponible')"><span
+                  class="fallback">Ourika</span></div>
+              <div>
+                <h4>Ourika</h4><small>Claire de Duras &#183; 1823</small>
+                <p>Une h&#233;ro&#239;ne face au regard des autres.</p>
+              </div>
+            </div>
+            <div class="minor">
+              <div class="thumb"><img class=""
+                  src="https://commons.wikimedia.org/wiki/Special:FilePath/Chimamanda%20Ngozi%20Adichie%202014.jpg?width=1000"
+                  alt="Americanah" loading="lazy" decoding="async"
+                  onerror="this.style.display='none';this.parentElement.classList.add('image-indisponible')"><span
+                  class="fallback">Americanah</span></div>
+              <div>
+                <h4>Americanah</h4><small>Chimamanda Ngozi Adichie &#183; 2013</small>
+                <p>Identit&#233; et pr&#233;jug&#233;s entre plusieurs mondes.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="chapter blue" id="chapitre-2" aria-label="S&#233;quence 2 : La po&#233;sie">
+        <article class="lead">
+          <div class="hero-image"><img class=""
+              src="https://commons.wikimedia.org/wiki/Special:FilePath/Rimbaud-Carjat-02.jpg?width=1000"
+              alt="Cahiers de Douai" loading="lazy" decoding="async"
+              onerror="this.style.display='none';this.parentElement.classList.add('image-indisponible')"><span
+              class="fallback">Cahiers de Douai</span><span class="image-caption">&#338;uvre int&#233;grale</span></div>
+          <div class="lead-body"><span class="tag">&#338;uvre au programme</span>
+            <h3>Cahiers de Douai</h3>
+            <p class="byline">Arthur Rimbaud &#183; 1870</p>
+            <p>Le jeune Rimbaud fait &#233;clater les cadres et transforme son d&#233;sir de libert&#233; en
+              po&#233;sie.</p>
+          </div>
+        </article>
+        <div class="marker" aria-hidden="true">II</div>
+        <div class="support">
+          <div class="dates">NOVEMBRE &#8212; JANVIER &nbsp; &#183; &nbsp; &#201;TAPE 02</div><span
+            class="supereyebrow">La po&#233;sie &nbsp; / &nbsp; Du XIXe au XXIe si&#232;cle</span>
+          <h2>Inventer sa propre voix</h2>
+          <p class="intent">Ruptures, d&#233;parts, r&#233;voltes : les mots deviennent un laboratoire de libert&#233;.
+          </p>
+          <div class="parcours">Parcours : &#171; &#201;mancipations cr&#233;atrices &#187;</div>
+          <div class="supereyebrow" style="margin:22px 0 12px">Lectures cursives au choix</div>
+          <div class="minorlist">
+            <div class="minor">
+              <div class="thumb"><img class=""
+                  src="https://commons.wikimedia.org/wiki/Special:FilePath/Guillaume%20Apollinaire%201914.jpg?width=1000"
+                  alt="Alcools" loading="lazy" decoding="async"
+                  onerror="this.style.display='none';this.parentElement.classList.add('image-indisponible')"><span
+                  class="fallback">Alcools</span></div>
+              <div>
+                <h4>Alcools</h4><small>Guillaume Apollinaire &#183; 1913</small>
+                <p>Une modernit&#233; po&#233;tique entre m&#233;moire et invention.</p>
+              </div>
+            </div>
+            <div class="minor">
+              <div class="thumb"><img class=""
+                  src="https://commons.wikimedia.org/wiki/Special:FilePath/Francis%20Ponge.jpg?width=1000"
+                  alt="Le Parti pris des choses" loading="lazy" decoding="async"
+                  onerror="this.style.display='none';this.parentElement.classList.add('image-indisponible')"><span
+                  class="fallback">Le Parti pris des choses</span></div>
+              <div>
+                <h4>Le Parti pris des choses</h4><small>Francis Ponge &#183; 1942</small>
+                <p>Red&#233;couvrir le r&#233;el &#224; travers les objets ordinaires.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="chapter rose" id="chapitre-3" aria-label="S&#233;quence 3 : Le roman et le r&#233;cit">
+        <article class="lead">
+          <div class="hero-image"><img class=""
+              src="https://commons.wikimedia.org/wiki/Special:FilePath/Lancelot%20passant%20le%20pont%20de%20l%27%C3%89p%C3%A9e.jpg?width=1000"
+              alt="Le Chevalier de la charrette" loading="lazy" decoding="async"
+              onerror="this.style.display='none';this.parentElement.classList.add('image-indisponible')"><span
+              class="fallback">Le Chevalier de la charrette</span><span class="image-caption">&#338;uvre
+              int&#233;grale</span></div>
+          <div class="lead-body"><span class="tag">&#338;uvre au programme</span>
+            <h3>Le Chevalier de la charrette</h3>
+            <p class="byline">Chr&#233;tien de Troyes &#183; XIIe si&#232;cle</p>
+            <p>Lancelot affronte l&#x27;humiliation et le danger par amour pour Gueni&#232;vre.</p>
+          </div>
+        </article>
+        <div class="marker" aria-hidden="true">III</div>
+        <div class="support">
+          <div class="dates">JANVIER &#8212; MARS &nbsp; &#183; &nbsp; &#201;TAPE 03</div><span class="supereyebrow">Le
+            roman et le r&#233;cit &nbsp; / &nbsp; Du Moyen &#194;ge au XXIe si&#232;cle</span>
+          <h2>Aimer, agir, se d&#233;passer</h2>
+          <p class="intent">L&#x27;aventure et les sentiments mettent &#224; l&#x27;&#233;preuve les figures du
+            h&#233;ros.</p>
+          <div class="parcours">Parcours : &#171; H&#233;ro&#239;sme et amour &#187;</div>
+          <div class="supereyebrow" style="margin:22px 0 12px">Lectures cursives au choix</div>
+          <div class="minorlist">
+            <div class="minor">
+              <div class="thumb"><img class=""
+                  src="https://commons.wikimedia.org/wiki/Special:FilePath/Achilles%20tending%20Patroclus%20Sosias%20Painter.jpg?width=1000"
+                  alt="Le Chant d&#x27;Achille" loading="lazy" decoding="async"
+                  onerror="this.style.display='none';this.parentElement.classList.add('image-indisponible')"><span
+                  class="fallback">Le Chant d&#x27;Achille</span></div>
+              <div>
+                <h4>Le Chant d&#x27;Achille</h4><small>Madeline Miller &#183; 2011</small>
+                <p>Achille et Patrocle : amour, gloire et destin&#233;e.</p>
+              </div>
+            </div>
+            <div class="minor">
+              <div class="thumb"><img class=""
+                  src="https://commons.wikimedia.org/wiki/Special:FilePath/Atala%20au%20tombeau%20Girodet.jpg?width=1000"
+                  alt="Atala" loading="lazy" decoding="async"
+                  onerror="this.style.display='none';this.parentElement.classList.add('image-indisponible')"><span
+                  class="fallback">Atala</span></div>
+              <div>
+                <h4>Atala</h4><small>Fran&#231;ois-Ren&#233; de Chateaubriand &#183; 1801</small>
+                <p>Une passion tragique au c&#339;ur d&#x27;une nature grandiose.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="chapter violet" id="chapitre-4" aria-label="S&#233;quence 4 : Le th&#233;&#226;tre">
+        <article class="lead">
+          <div class="hero-image"><img class=""
+              src="https://commons.wikimedia.org/wiki/Special:FilePath/Alfred%20de%20Musset.jpg?width=1000"
+              alt="On ne badine pas avec l&#x27;amour" loading="lazy" decoding="async"
+              onerror="this.style.display='none';this.parentElement.classList.add('image-indisponible')"><span
+              class="fallback">On ne badine pas avec l&#x27;amour</span><span class="image-caption">&#338;uvre
+              int&#233;grale</span></div>
+          <div class="lead-body"><span class="tag">&#338;uvre au programme</span>
+            <h3>On ne badine pas avec l&#x27;amour</h3>
+            <p class="byline">Alfred de Musset &#183; 1834</p>
+            <p>Camille et Perdican se provoquent avec les mots, jusqu&#x27;&#224; transformer le jeu en trag&#233;die.
+            </p>
+          </div>
+        </article>
+        <div class="marker" aria-hidden="true">IV</div>
+        <div class="support">
+          <div class="dates">MARS &#8212; JUIN &nbsp; &#183; &nbsp; &#201;TAPE 04</div><span class="supereyebrow">Le
+            th&#233;&#226;tre &nbsp; / &nbsp; Du XVIIe au XXIe si&#232;cle</span>
+          <h2>Les mots peuvent-ils blesser ?</h2>
+          <p class="intent">Entre aveux, silences et malentendus, la sc&#232;ne r&#233;v&#232;le les pi&#232;ges de la
+            parole amoureuse.</p>
+          <div class="parcours">Parcours : &#171; Les jeux du c&#339;ur et de la parole &#187;</div>
+          <div class="supereyebrow" style="margin:22px 0 12px">Lectures cursives au choix</div>
+          <div class="minorlist">
+            <div class="minor">
+              <div class="thumb"><img class=""
+                  src="https://commons.wikimedia.org/wiki/Special:FilePath/Moli%C3%A8re%20-%20Nicolas%20Mignard.jpg?width=1000"
+                  alt="L&#x27;&#201;cole des femmes" loading="lazy" decoding="async"
+                  onerror="this.style.display='none';this.parentElement.classList.add('image-indisponible')"><span
+                  class="fallback">L&#x27;&#201;cole des femmes</span></div>
+              <div>
+                <h4>L&#x27;&#201;cole des femmes</h4><small>Moli&#232;re &#183; 1662</small>
+                <p>L&#x27;autorit&#233; d&#x27;Arnolphe mise &#224; l&#x27;&#233;preuve du d&#233;sir de libert&#233;.
+                </p>
+              </div>
+            </div>
+            <div class="minor">
+              <div class="thumb"><img class=""
+                  src="https://commons.wikimedia.org/wiki/Special:FilePath/Jean%20Anouilh.jpg?width=1000"
+                  alt="L&#x27;Invitation au ch&#226;teau" loading="lazy" decoding="async"
+                  onerror="this.style.display='none';this.parentElement.classList.add('image-indisponible')"><span
+                  class="fallback">L&#x27;Invitation au ch&#226;teau</span></div>
+              <div>
+                <h4>L&#x27;Invitation au ch&#226;teau</h4><small>Jean Anouilh &#183; 1947</small>
+                <p>Un bal, des faux-semblants et une cruaut&#233; mondaine.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <section class="endcap">
+      <div class="eyebrow">&#192; vous de jouer</div>
+      <h2>La suite s'&#233;crit en classe.</h2>
+      <p>Lire, questionner, d&#233;battre, &#233;crire, interpr&#233;ter : tout au long de l'ann&#233;e, les &#339;uvres
+        nourrissent nos entra&#238;nements aux &#233;preuves &#233;crites et orales du baccalaur&#233;at.</p><a
+        href="#debut">Revenir au d&#233;but &#8593;</a>
+    </section>
+  </main>
+  <aside class="note">
+    <div class="note-inner">
+      <h3>Comment utiliser cette page ?</h3>
+      <p>La frise pr&#233;sente les quatre objets d'&#233;tude et les lectures de la progression annuelle. Les
+        &#339;uvres int&#233;grales sont &#233;tudi&#233;es en cours ; les deux titres de chaque &#233;tape proposent
+        des lectures cursives au choix. Les dates indiquent les grandes p&#233;riodes envisag&#233;es et peuvent
+        &#233;voluer.</p>
+      <p class="source">Cr&#233;dits images : reproductions issues de Wikimedia Commons (chargement en ligne). Certaines
+        images sont des portraits d'auteur ou des &#233;vocations iconographiques, et non des couvertures
+        d'&#233;dition. Pour un usage public, v&#233;rifier les notices et licences individuelles sur Wikimedia Commons.
+      </p>
+    </div>
+  </aside>
+  <footer>Fran&#231;ais &#183; 1re ST2S &#183; Lyc&#233;e Honor&#233; d'Urf&#233; &#183; Ann&#233;e 2026-2027</footer>
+  <script>
+    (function () {
+      const bar = document.getElementById('scrollProgress');
+      const nav = [...document.querySelectorAll('.navinner a')];
 
-  </section>
-
-</main>
-
-<footer>
-  <div class="conteneur">
-    <p>Test 2 — menu déroulant &amp; portraits · GitHub Pages</p>
-  </div>
-</footer>
-
-<!-- Swiper en local (dossier assets/js), import ES natif -->
-<script type="module">
-  import Swiper from "./assets/js/swiper-bundle.min.js";
-
-  new Swiper("#portraits", {
-    loop: true,                       // défilement infini
-    spaceBetween: 24,
-    slidesPerView: 1,
-    breakpoints: { "48rem": { slidesPerView: 2 } },  // 2 portraits côte à côte sur grand écran
-    autoplay: {
-      delay: 4000,                    // rotation automatique toutes les 4 s
-      pauseOnMouseEnter: true,        // … en pause quand on explore à la souris
-      disableOnInteraction: false,
-    },
-    pagination: { el: ".swiper-pagination", clickable: true },
-    navigation: { prevEl: ".precedent", nextEl: ".suivant" },
-    keyboard: { enabled: true },     // navigable aux flèches du clavier
-    a11y: true,
-  });
-</script>
-
+      function update() {
+        const h = document.documentElement;
+        const max = h.scrollHeight - h.clientHeight;
+        bar.style.width = (max > 0 ? 100 * h.scrollTop / max : 0) + '%';
+        let active = 0;
+        for (let i = 1; i <= 4; i++) {
+          const el = document.getElementById('chapitre-' + i);
+          if (el && el.getBoundingClientRect().top < 180) active = i;
+        }
+        nav.forEach((n, i) => n.classList.toggle('active', i === active));
+      }
+      window.addEventListener('scroll', update, {
+        passive: true
+      });
+      update();
+    })();
+  </script>
 </body>
+
 </html>
