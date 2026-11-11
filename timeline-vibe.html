@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1d2b2a">
+<title>Roadmap 2026-27 · Français 1re ST2S3</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap');
+:root{
+  --bg:#f2efe7; --card:#fbf9f2; --ink:#1f2b2a; --soft:#5f6d68; --line:#e0dcd0;
+  --terra:#c2603f; --sea:#3d6b78; --forest:#5b7150; --plum:#7d5480; --gold:#a5842e;
+  --done:#7d8f6a; --now:#c2603f; --soon:#b9c4cf;
+  --labw:268px; --day:10.6px; --ax:3250px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif}
+button{font:inherit}
+
+/* ===== En-tête ===== */
+.hero{max-width:1560px;margin:0 auto;padding:46px clamp(16px,3vw,52px) 8px}
+.hero .kicker{letter-spacing:.24em;font-size:10.5px;font-weight:800;text-transform:uppercase;color:var(--terra)}
+.hero h1{font:600 clamp(34px,4.6vw,62px)/1.03 'Fraunces',Georgia,serif;margin:14px 0 10px;letter-spacing:-.02em}
+.hero h1 em{font-style:italic;color:var(--sea)}
+.hero p{color:var(--soft);font-size:14px;line-height:1.6;max-width:620px;margin:0}
+.hero .meta{display:flex;gap:26px;flex-wrap:wrap;margin:26px 0 6px;padding-top:20px;border-top:1px solid var(--line)}
+.hero .meta div b{display:block;font:600 25px 'Fraunces',serif}
+.hero .meta div b i{font:700 11px 'Inter';font-style:normal;color:var(--soft);letter-spacing:.06em}
+.hero .meta div span{font-size:11.5px;color:var(--soft)}
+
+/* ===== Bandeau de contrôle ===== */
+.deck{max-width:1560px;margin:14px auto 0;padding:0 clamp(16px,3vw,52px)}
+.controls{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:16px}
+.controls h2{font:600 21px 'Fraunces',serif;margin:0 auto 0 0}
+.ctl{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:9px 15px;font-size:12px;font-weight:700;cursor:pointer}
+.ctl:hover{background:#efeadb}
+.ctl.main{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* ===== Frise ===== */
+.board{max-width:1560px;margin:0 auto 10px;padding:0 clamp(16px,3vw,52px)}
+.frame{border:1px solid #d5d0c2;border-radius:16px;background:var(--card);overflow:hidden;box-shadow:0 16px 50px #22302d0d}
+.viewport{overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;scrollbar-color:#b3ad9e #eeebe2}
+.viewport::-webkit-scrollbar{height:11px}
+.viewport::-webkit-scrollbar-thumb{background:#b3ad9e;border-radius:20px;border:3px solid #eeebe2}
+.grid{width:calc(var(--labw) + var(--ax));position:relative}
+.lane{display:flex;min-height:96px;border-bottom:1px solid #edeade;position:relative}
+.lane:last-child{border-bottom:0}
+.lab{position:sticky;left:0;z-index:14;flex:0 0 var(--labw);width:var(--labw);padding:16px 18px;background:var(--card);border-right:1px solid #d5d0c2;box-shadow:6px 0 14px #22302d08}
+.lab .no{display:block;font-size:9.5px;font-weight:800;letter-spacing:.2em;color:#a09a8a;text-transform:uppercase}
+.lab h3{font:600 18px 'Fraunces',serif;margin:7px 0 5px}
+.lab p{margin:0;font-size:10.5px;line-height:1.5;color:var(--soft)}
+.lab .tag{display:inline-flex;align-items:center;gap:6px;margin-top:9px;font-size:9.5px;font-weight:700;color:var(--soft);letter-spacing:.05em;text-transform:uppercase}
+.lab .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.canvas{position:relative;flex:none;width:var(--ax);background:repeating-linear-gradient(to right,transparent 0,transparent calc(7*var(--day) - 1px),#f0eee5 calc(7*var(--day) - 1px),#f0eee5 calc(7*var(--day)))}
+
+/* Échelle */
+.scale{min-height:64px;background:#f6f4ec}
+.scale .lab{background:#f6f4ec;padding-top:13px}
+.scale .lab span{font-size:9.5px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:#a08a63}
+.scale .lab b{display:block;font:600 16px 'Fraunces',serif;margin-top:5px}
+.mo{position:absolute;top:0;bottom:0;border-left:1px solid #ded8c8;padding:10px 0 0 13px}
+.mo:first-child{border-left:0}
+.mo b{font:600 15px 'Fraunces',serif;display:block}
+.mo small{font-size:9.5px;color:#9a958a}
+.vac{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(135deg,#c9b9895e 0 5px,transparent 5px 11px);pointer-events:none;z-index:1}
+.msep{position:absolute;top:0;bottom:0;width:1px;background:#e8e3d5;z-index:1;pointer-events:none}
+.nowbar{position:absolute;top:0;bottom:0;width:2px;background:var(--terra);z-index:9;pointer-events:none}
+.nowbar::before{content:"";position:absolute;top:0;left:-4px;width:10px;height:10px;border-radius:50%;background:var(--terra)}
+
+/* Jalons */
+.milestones{min-height:330px}
+.mk{position:absolute;z-index:6;top:0;border:0;background:none;padding:0;cursor:pointer;text-align:left;transform:translateX(-5px)}
+.mk .pin{display:block;width:9px;height:9px;margin-left:4px;border-radius:50%;background:var(--terra);border:2px solid var(--card);outline:1px solid var(--terra)}
+.mk .stem{display:block;width:1px;height:13px;background:#c4bfb0;margin-left:8px}
+.mk .box{display:block;width:150px;background:var(--card);border:1px solid #d8d4c8;border-radius:9px;padding:7px 9px;box-shadow:0 5px 13px #22302d12;transition:transform .15s,box-shadow .15s}
+.mk:hover .box{transform:translateY(-3px);box-shadow:0 9px 20px #22302d1f}
+.mk .d{font-size:8.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#a1795a}
+.mk .t{display:block;margin-top:3px;font-size:10px;font-weight:700;line-height:1.35;color:#2c3a38}
+.mk.exam .pin{background:#b03d38;outline-color:#b03d38}.mk.exam .d{color:#b03d38}
+.mk.insp .pin{background:#7d5480;outline-color:#7d5480}.mk.insp .d{color:#7d5480}
+.mk.today .pin{background:#1f2b2a;outline-color:#1f2b2a;animation:pulse 1.6s infinite}
+@keyframes pulse{50%{transform:scale(1.35)}}
+
+/* Segments */
+.track{position:absolute;z-index:4;height:33px;border:0;border-radius:8px;color:#fff;padding:0 11px;font:700 10.5px 'Inter';text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;box-shadow:0 4px 9px #22302d15;transition:filter .15s,transform .15s}
+.track:hover{filter:brightness(.88);transform:translateY(-2px)}
+.track.plan{height:22px;z-index:2;opacity:.15;pointer-events:none}
+.track.fin{background:var(--done)}
+.track.nowc{background:var(--now)}
+.track.grev{background:var(--soon);color:#4c5c67}
+.hint{position:absolute;left:12px;bottom:7px;font-size:9px;color:#a49d8d;z-index:2}
+
+/* Légende + slider */
+.legend{display:flex;gap:16px;flex-wrap:wrap;align-items:center;padding:13px 19px;border-top:1px solid var(--line);font-size:10.5px;color:var(--soft)}
+.legend .k{display:inline-flex;align-items:center;gap:6px}
+.legend .k i{width:19px;height:7px;border-radius:4px;display:inline-block}
+.slider{display:flex;align-items:center;gap:10px;padding:0 19px 16px}
+.slider input{flex:1;accent-color:var(--terra)}
+
+/* ===== Panneaux ===== */
+.panels{max-width:1560px;margin:22px auto 90px;padding:0 clamp(16px,3vw,52px);display:grid;grid-template-columns:1.05fr 1fr 1fr;gap:13px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+.panel h3{font:600 17.5px 'Fraunces',serif;margin:0 0 11px}
+.panel ul{list-style:none;margin:0;padding:0}
+.panel li{padding:8px 0;border-top:1px solid #efece1;font-size:12px;line-height:1.55;color:#4d5b58}
+.panel li:first-child{border-top:0}
+.panel b{color:#263435}
+.panel .alert{color:#a35447}
+
+/* Modale */
+.veil{position:fixed;inset:0;background:#16211f7a;z-index:60;display:none;align-items:center;justify-content:center;padding:22px}
+.veil.open{display:flex}
+.pop{position:relative;max-width:520px;width:100%;background:var(--card);border-radius:15px;padding:30px;box-shadow:0 30px 90px #0c1513aa}
+.pop .d{font-size:10px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--terra)}
+.pop h3{font:600 24px/1.25 'Fraunces',serif;margin:11px 0 12px}
+.pop p{font-size:13.5px;line-height:1.7;color:#4d5b58;margin:0}
+.pop .x{position:absolute;top:14px;right:14px;width:32px;height:32px;border:0;border-radius:50%;background:#efece1;cursor:pointer;font-size:18px}
+
+/* Flottante */
+.dock{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:40;display:flex;align-items:center;gap:7px;background:#1d2b2af2;color:#fff;border:1px solid #ffffff30;border-radius:14px;padding:8px 10px;box-shadow:0 16px 44px #12221f55;backdrop-filter:blur(12px);max-width:calc(100vw - 22px)}
+.dock button{border:1px solid #ffffff38;background:#ffffff12;color:#fff;border-radius:10px;padding:10px 13px;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap}
+.dock button:hover{background:#ffffff26}
+.dock button:disabled{opacity:.3;cursor:default}
+.dock .go{background:#c2603f;border-color:#c2603f;color:#fff}
+.dock .go:hover{background:#d4734f}
+.dock .prog{min-width:130px;padding:0 8px}
+.dock .prog span{display:block;font-size:9.5px;color:#c8d0cd;margin-bottom:5px}
+.dock .prog .bar{height:3px;background:#ffffff30;border-radius:4px;overflow:hidden}
+.dock .prog .fill{height:100%;width:0;background:#e2a47e;border-radius:4px}
+body{padding-bottom:88px}
+
+@media(max-width:760px){:root{--labw:196px;--day:9.4px;--ax:2880px}.hero{padding-top:28px}.panels{grid-template-columns:1fr}.milestones{min-height:300px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+@media print{.dock,.slider,.veil{display:none!important}.viewport{overflow:visible}.frame{overflow:visible}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="kicker">Lycée Honoré d'Urfé · Progression 2026-2027</div>
+  <h1>Roadmap de l'année, <em>matière par matière.</em></h1>
+  <p>Français · Première ST2S3 — suivi visuel des séquences, des compétences transversales et des échéances, de septembre à juin. Base de travail partagée : tuteurs, IA-IPR, élèves.</p>
+  <div class="meta">
+    <div><b>4 <i>objets</i></b><span>d'étude, de Graffigny à Musset</span></div>
+    <div><b>12 <i>explications</i></b><span>objectif de l'année pour l'oral</span></div>
+    <div><b>3 <i>bacs blancs</i></b><span>écrits + oraux, jalons d'évaluation</span></div>
+    <div><b>8 <i>œuvres</i></b><span>4 intégrales + 4 cursives</span></div>
+  </div>
+</header>
+
+<div class="deck">
+  <div class="controls">
+    <h2>La traversée de l'année</h2>
+    <button class="ctl" id="bPrev">← Reculer</button>
+    <button class="ctl main" id="bNow">Aujourd'hui</button>
+    <button class="ctl" id="bNext">Avancer →</button>
+  </div>
+</div>
+
+<div class="board">
+  <div class="frame">
+    <div class="viewport" id="vp" role="region" tabindex="0" aria-label="Frise annuelle à défilement horizontal">
+      <div class="grid" id="grid"></div>
+    </div>
+    <div class="legend">
+      <span class="k"><i style="background:#c2603f"></i>Graffigny · S1</span>
+      <span class="k"><i style="background:#3d6b78"></i>Rimbaud · S2</span>
+      <span class="k"><i style="background:#5b7150"></i>Chrétien de Troyes · S3</span>
+      <span class="k"><i style="background:#7d5480"></i>Musset · S4</span>
+      <span class="k"><i style="background:#a5842e"></i>Transversal</span>
+      <span class="k"><i style="background:#7d8f6a"></i>Accompli</span>
+      <span class="k"><i style="background:#b9c4cf"></i>À venir</span>
+      <span style="margin-left:auto;color:#928d80">Cliquer un élément pour le détail</span>
+    </div>
+    <div class="slider">
+      <span style="font-size:11px;color:var(--soft)">Sept. 2026</span>
+      <input id="scrub" type="range" min="0" max="100" value="0" aria-label="Naviguer dans la frise">
+      <span style="font-size:11px;color:var(--soft)">Juin 2027</span>
+    </div>
+  </div>
+</div>
+
+<section class="panels">
+  <article class="panel">
+    <h3>Le cap pédagogique</h3>
+    <ul>
+      <li><b>12 explications linéaires</b> : trois par objet d'étude, dont la question de grammaire à l'oral.</li>
+      <li><b>Écrit :</b> contraction puis essai (BB1), commentaire à partir du BB2.</li>
+      <li><b>Langue :</b> trois notions de grammaire dans l'année, en commençant par la négation.</li>
+      <li><b>Lecture cursive :</b> Ourika, Alcools/Ponge, Atala/Achille, École des femmes/Anouilh.</li>
+    </ul>
+  </article>
+  <article class="panel">
+    <h3>Points de vigilance · 11 novembre</h3>
+    <ul>
+      <li class="alert"><b>Oral :</b> rituel « un élève, cinq minutes » pas encore lancé.</li>
+      <li class="alert"><b>Rimbaud :</b> fenêtre courte, lancement le 23 novembre.</li>
+      <li><b>Graffigny :</b> EL3 et contrôles de lecture à finaliser avant la bascule.</li>
+      <li><b>Écrit :</b> copies du DS contraction du 9 novembre à corriger avant le BB1.</li>
+    </ul>
+  </article>
+  <article class="panel">
+    <h3>Décisions prochaines</h3>
+    <ul>
+      <li><b>13 nov. :</b> clôture EL2 (lettre 34) + annonce EL3.</li>
+      <li><b>20 nov. :</b> contrôles de lecture Graffigny + Ourika (à confirmer).</li>
+      <li><b>30 nov. :</b> séance inspectée IA-IPR, piste grammaire « négation ».</li>
+      <li><b>Avant Noël :</b> deux EL des <i>Cahiers</i> + une EL de parcours.</li>
+    </ul>
+  </article>
+</section>
+
+<nav class="dock" aria-label="Navigation dans la frise">
+  <button id="dPrev" aria-label="Reculer">←</button>
+  <div class="prog"><span id="dLabel">Septembre 2026</span><div class="bar"><div class="fill" id="dFill"></div></div></div>
+  <button class="go" id="dNow">11 nov.</button>
+  <button id="dNext" aria-label="Avancer">→</button>
+</nav>
+
+<div class="veil" id="veil" role="dialog" aria-modal="true">
+  <div class="pop">
+    <button class="x" id="xClose" aria-label="Fermer">×</button>
+    <div class="d" id="pDate"></div>
+    <h3 id="pTitle"></h3>
+    <p id="pText"></p>
+  </div>
+</div>
+
+<script>
+/* ================= Données de la roadmap ================= */
+const D=(y,m,d)=>new Date(y,m-1,d,12);
+const START=D(2026,9,1),END=D(2027,6,30),DAY=86400000,NOW=D(2026,11,11);
+const DONE='#7d8f6a',NOWC='#c2603f',PLAN='#b9c4cf';
+const VAC=[
+  {s:D(2026,10,2),e:D(2026,10,17),t:"Distanciel (blocages)"},
+  {s:D(2026,10,17),e:D(2026,11,2),t:"Vacances de Toussaint"},
+  {s:D(2026,12,19),e:D(2027,1,4),t:"Vacances de Noël"},
+  {s:D(2027,2,14),e:D(2027,3,1),t:"Vacances d'hiver (≈)"},
+  {s:D(2027,4,11),e:D(2027,4,27),t:"Vacances de printemps (≈)"}
+];
+const MK=[
+  {d:D(2026,9,4),c:"#8a9aa5",t:"Rentrée · présentation du programme"},
+  {d:D(2026,9,28),c:DONE,t:"DS essai (2 h, sujet Lucie Azéma)"},
+  {d:D(2026,10,2),c:"#8a9aa5",t:"Début du distanciel (blocages) · contrôle Graffigny reporté"},
+  {d:D(2026,11,2),c:"#8a9aa5",t:"Reprise en présentiel (H20)"},
+  {d:D(2026,11,6),c:DONE,t:"H21-H22 : méthodo contraction + app + correction EL2"},
+  {d:D(2026,11,9),c:DONE,t:"DS contraction (2 h) — à corriger avant le BB1"},
+  {d:NOW,c:"#1f2b2a",t:"Contrôle roadmap n°1 — point de situation",today:true},
+  {d:D(2026,11,13),c:NOWC,t:"Clôture EL2 (lettre 34) + annonce EL3 · 1 h (Q2 : visite tutorat)"},
+  {d:D(2026,11,20),c:NOWC,t:"Fin du 1er trimestre · proposition : contrôles de lecture Graffigny + Ourika"},
+  {d:D(2026,11,23),c:PLAN,t:"Lancement Rimbaud (S2) + rituel oral « 1 élève × 5 min »"},
+  {d:D(2026,11,30),c:"#7d5480",t:"Inspection IA-IPR A. Dufêtre (11h-12h) — séance grammaire négation · cursive Rimbaud due",insp:true},
+  {d:D(2026,12,3),c:"#b03d38",t:"Bac blanc n°1 : contraction + essai (4 h)",exam:true},
+  {d:D(2026,12,19),c:"#8a9aa5",t:"Objectif : Rimbaud terminé avant Noël (2 EL Cahiers + 1 EL parcours)"},
+  {d:D(2027,2,8),c:PLAN,t:"BB n°2 (8-12/02) : commentaire · lancement Chrétien de Troyes (S3)"},
+  {d:D(2027,3,30),c:PLAN,t:"BB n°3 (30/03-02/04) · lancement Musset (S4)"},
+  {d:D(2027,4,26),c:"#b03d38",t:"Bacs blancs oraux (26/04 - 05/05)",exam:true},
+  {d:D(2027,6,14),c:PLAN,t:"EAF : écrits (mi-juin) puis oraux"}
+];
+const LANES=[
+  {no:"02 · Séquence",title:"S1 · Graffigny",sub:"Lettres d'une Péruvienne + cursive Ourika",col:'#c2603f',state:"En cours",rows:[
+    {s:D(2026,9,7),e:D(2026,10,16),plan:1,tip:"Période planifiée S1 (sept.-oct.)"},
+    {s:D(2026,9,7),e:D(2026,9,21),c:DONE,t:"Intro + EL1",tip:"Montaigne, discours argumentatif, contexte XVIIIe — EL1 lettre 1 réalisée."},
+    {s:D(2026,10,2),e:D(2026,10,16),c:"#a5842e",t:"Distanciel",tip:"Distanciel (blocages) : méthodo contraction, EL2 en questionnaire — période glissée."},
+    {s:D(2026,10,16),e:D(2026,11,13),c:NOWC,t:"EL2 → clôture 13/11",tip:"EL2 lettre 34 corrigée le 06/11, clôture collective le 13/11 · EL3 à choisir."},
+    {s:D(2026,11,13),e:D(2026,11,27),c:"#d9a441",t:"EL3 + contrôles ?",tip:"Reste de S1 : EL3 (parcours) + contrôles de lecture Graffigny/Ourika — proposition : 20/11."}
+  ]},
+  {no:"03 · Séquence",title:"S2 · Rimbaud",sub:"Cahiers de Douai + Alcools / Ponge",col:'#3d6b78',state:"À lancer le 23/11",rows:[
+    {s:D(2026,11,2),e:D(2027,1,16),plan:1,tip:"Période planifiée S2 (nov.-janv.)"},
+    {s:D(2026,11,2),e:D(2026,11,9),c:"#a5842e",t:"Lectures",tip:"Cahiers de Douai à lire dès le 02/11 (calendrier de lecture)."},
+    {s:D(2026,11,23),e:D(2026,12,19),c:NOWC,t:"Lancement 23/11 → avant Noël",tip:"Fenêtre serrée : ~9 h de cours avant Noël, dont 3 EL (2 Cahiers + 1 parcours) — cursive due au 30/11."}
+  ]},
+  {no:"04 · Séquence",title:"S3 · Chrétien de Troyes",sub:"Le Chevalier de la charrette + Atala / Achille",col:'#5b7150',state:"Planifié · janv.",rows:[
+    {s:D(2027,1,4),e:D(2027,3,20),plan:1,tip:"Période planifiée S3 (janv.-mars)."}
+  ],trackTip:"Traduction Aubailly à acheter · lectures : 04/01 et 01/02 · BB2 commentaire (8-12/02)."},
+  {no:"05 · Séquence",title:"S4 · Musset",sub:"On ne badine pas + École des femmes / Anouilh",col:'#7d5480',state:"Planifié · mars",rows:[
+    {s:D(2027,3,1),e:D(2027,6,10),plan:1,tip:"Période planifiée S4 (mars-juin)."}
+  ],trackTip:"Lectures : 01/03 et 05/04 · BB3 (30/03-02/04) · bacs blancs oraux 26/04-05/05 · EAF."},
+  {no:"06 · Transversal",title:"Langue · écrit · oral",sub:"Grammaire, contraction/essai, rituel oral",col:'#a5842e',state:"Toute l'année",rows:[
+    {s:D(2026,9,25),e:D(2026,10,16),c:DONE,t:"Méthodo essai + DS",tip:"Méthodo de l'essai vue, travaillée, évaluée (DS 28/09), corrigée et rendue."},
+    {s:D(2026,10,2),e:D(2026,12,3),c:NOWC,t:"Contraction → BB1",tip:"Chaîne contraction : méthodo v2, exos Belin, app, DS 09/11 → BB1 le 03/12."},
+    {s:D(2026,11,23),e:D(2027,6,10),c:"#8e5bb8",t:"Grammaire (négation…)",tip:"3 notions dans l'année, la première = négation (classe inversée) — cible : séance inspectée du 30/11 · commentaire dès le BB2."},
+    {s:D(2026,11,23),e:D(2027,6,10),c:"#4f8a5b",t:"Oral : rituel EL",tip:"Rituel « 1 élève × 5 min » à lancer le 23/11 + présentation d'œuvre — remédiation feu rouge oral."}
+  ]}
+];
+
+/* ================= Rendu ================= */
+const grid=document.getElementById('grid'),vp=document.getElementById('vp');
+const dayPx=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--day'))||10.6;
+const X=d=>Math.round((d-START)/DAY*dayPx);
+document.documentElement.style.setProperty('--ax',(X(END)+dayPx)+'px');
+const fr=d=>d.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+const clean=s=>s.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+
+function pop(title,date,text){document.getElementById('pDate').textContent=date;
+  document.getElementById('pTitle').textContent=title;
+  document.getElementById('pText').textContent=text;
+  document.getElementById('veil').classList.add('open');
+  document.getElementById('xClose').focus();}
+
+function lane(no,cls,headHTML){
+  const row=document.createElement('div');row.className='lane '+cls;
+  const lab=document.createElement('div');lab.className='lab';lab.innerHTML=headHTML;
+  const cv=document.createElement('div');cv.className='canvas';
+  row.append(lab,cv);grid.appendChild(row);return cv;
+}
+function decorate(cv){
+  VAC.forEach(v=>{const d=document.createElement('div');d.className='vac';
+    d.style.left=X(v.s)+'px';d.style.width=Math.max(2,X(v.e)-X(v.s))+'px';d.title=v.t;cv.appendChild(d)});
+  for(let i=1;i<10;i++){const d=document.createElement('div');d.className='msep';
+    d.style.left=X(D(2026,9+i,1))+'px';cv.appendChild(d)}
+  const n=document.createElement('div');n.className='nowbar';
+  n.style.left=X(NOW)+'px';n.title='Aujourd\'hui · 11 novembre 2026';cv.appendChild(n);
+}
+
+/* Échelle */
+const scale=lane('','scale','<span>Échelle</span><b>2026 — 2027</b>');
+const MN=['Septembre','Octobre','Novembre','Décembre','Janvier','Février','Mars','Avril','Mai','Juin'];
+for(let i=0;i<10;i++){
+  const d=D(2026,9+i,1),nx=D(2026,10+i,1);
+  const m=document.createElement('div');m.className='mo';
+  m.style.left=X(d)+'px';m.style.width=(X(nx)-X(d))+'px';
+  m.innerHTML=`<b>${MN[i]}</b><small>${i<4?'2026':'2027'}</small>`;
+  scale.appendChild(m);
+}
+decorate(scale);
+
+/* Jalons (anti-chevauchement : 4 colonnes de cartes) */
+const mil=lane('','milestones',`<span class="no">01 · Jalons</span><h3>Dates à retenir</h3>
+  <p>Devoirs, échéances officielles et moments structurants de l'année.</p>
+  <span class="tag"><span class="dot" style="background:#c2603f"></span>Cliquer pour le détail</span>`);
+decorate(mil);
+const used=[];
+MK.forEach(m=>{
+  const left=X(m.d);let col=0;
+  for(let k=0;k<4;k++){if(((used[k]??-999))+150<=left){col=k;break;}else col=k;}
+  used[col]=left;
+  const b=document.createElement('button');b.type='button';
+  b.className='mk'+(m.exam?' exam':'')+(m.insp?' insp':'')+(m.today?' today':'');
+  b.style.left=left+'px';b.style.top=(10+col*62)+'px';
+  const short=m.t.replace(/\s*\([^)]*\)/g,'');
+  b.innerHTML=`<span class="pin" style="${m.c?'background:'+m.c+';outline-color:'+m.c:''}"></span><span class="stem"></span><span class="box"><span class="d">${m.d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short'})}</span><span class="t"></span></span>`;
+  b.querySelector('.t').textContent=short.length>40?short.slice(0,38)+'…':short;
+  b.title=m.t;
+  b.addEventListener('click',()=>pop('Jalon',fr(m.d),m.t));
+  mil.appendChild(b);
+});
+
+/* Séquences */
+const TRACKS=[[52,96,52,98],[52,96],[52],[52],[52,96,52,100]];
+LANES.forEach((L,i)=>{
+  const cv=lane('',L.state==='Toute l\'année'?'':'',`<span class="no">${L.no}</span><h3>${L.title}</h3><p>${L.sub}</p>
+    <span class="tag"><span class="dot" style="background:${L.col}"></span>${L.state}</span>`);
+  decorate(cv);
+  L.rows.forEach((r,j)=>{
+    const el=document.createElement('button');el.type='button';
+    const isPlan=!!r.plan;
+    el.className='track'+(isPlan?' plan':'');
+    el.style.left=X(r.s)+'px';
+    el.style.width=Math.max(6,X(r.e)-X(r.s))+'px';
+    el.style.top=(isPlan?8:TRACKS[i][Math.min(j,L.rows.length-1)]+(j>=2&&i===0?2:0))+'px';
+    if(!isPlan&&i===4)el.style.height='29px';
+    el.style.background=isPlan?L.col:r.c;
+    el.textContent=isPlan?'':(r.t||'');
+    const tip=isPlan?r.tip:(L.trackTip&&L.rows.length===1?L.trackTip:r.tip);
+    el.title=clean(tip);
+    if(isPlan){el.tabIndex=-1;el.setAttribute('aria-hidden','true')}
+    else el.addEventListener('click',()=>pop(L.title+' · '+(r.t||''),`${fr(r.s)} — ${fr(r.e)}`,clean(tip)));
+    cv.appendChild(el);
+  });
+  if(L.trackTip&&L.rows.length>1){
+    const h=document.createElement('span');h.className='hint';h.textContent='Voir détail au clic';cv.appendChild(h);
+  }
+});
+
+/* ================= Navigation ================= */
+const scrub=document.getElementById('scrub');
+const max=()=>vp.scrollWidth-vp.clientWidth;
+const sync=()=>{scrub.value=max()>0?Math.round(vp.scrollLeft/max()*100):0;
+  document.getElementById('dFill').style.width=(max()>0?vp.scrollLeft/max()*100:0)+'%';
+  document.getElementById('dPrev').disabled=vp.scrollLeft<=3;
+  document.getElementById('dNext').disabled=vp.scrollLeft>=max()-3;
+  const f=new Date(START.getTime()+((vp.scrollLeft+Math.min(vp.clientWidth*.5,500)-268)/dayPx)*DAY);
+  const c=new Date(Math.max(START.getTime(),Math.min(END.getTime(),f.getTime())));
+  document.getElementById('dLabel').textContent=c.toLocaleDateString('fr-FR',{month:'long',year:'numeric'});};
+vp.addEventListener('scroll',sync,{passive:true});
+window.addEventListener('resize',sync);
+scrub.addEventListener('input',()=>vp.scrollLeft=max()*Number(scrub.value)/100);
+const goNow=()=>vp.scrollTo({left:Math.max(0,X(NOW)-vp.clientWidth*.45),behavior:'smooth'});
+document.getElementById('bNow').onclick=goNow;
+document.getElementById('dNow').onclick=goNow;
+document.getElementById('bPrev').onclick=document.getElementById('dPrev').onclick=()=>vp.scrollBy({left:-640,behavior:'smooth'});
+document.getElementById('bNext').onclick=document.getElementById('dNext').onclick=()=>vp.scrollBy({left:640,behavior:'smooth'});
+vp.addEventListener('wheel',e=>{if(e.shiftKey&&Math.abs(e.deltaY)>0){e.preventDefault();vp.scrollLeft+=e.deltaY}},{passive:false});
+const close=()=>document.getElementById('veil').classList.remove('open');
+document.getElementById('xClose').onclick=close;
+document.getElementById('veil').onclick=e=>{if(e.target.id==='veil')close()};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+window.addEventListener('load',()=>{vp.scrollLeft=Math.max(0,X(D(2026,10,25))-80);sync()});
+</script>
+</body>
+</html>
