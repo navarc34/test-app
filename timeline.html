@@ -34,6 +34,16 @@ body{padding-bottom:92px}
 @media(max-width:1150px){.art-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:680px){.art-gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.art-card{display:block}.art-image{width:100%;height:105px}.art-info{padding:10px}.art-author{margin-top:4px;font-size:14px}.art-credit{font-size:9px}.art-work{margin-top:4px}.art-heading{display:block}.art-heading p{margin-top:6px}.floating-nav{bottom:11px;gap:5px;padding:7px}.floating-nav .float-button{padding:10px 9px;font-size:11px}.float-progress{min-width:75px;padding:0 3px}.float-caption{font-size:9px}}
 @media print{.floating-nav{display:none}}
+/* V3 — Jalons déplaçables, reliés à leur date par un fil */
+.events-row{height:415px;min-height:415px}
+.event-card{position:relative;z-index:2;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;will-change:translate;max-width:151px}
+.event-card.dragging,.event:hover .event-card.dragging{cursor:grabbing;transform:none;box-shadow:0 13px 27px #28344036;border-color:#b48765}
+.event-thread{position:absolute;left:5px;top:5px;height:1.5px;background:#b0a69c;transform-origin:left center;pointer-events:none;z-index:1;opacity:.85}
+.event-stem{visibility:hidden}.event-pin{position:relative;z-index:3}
+.event.is-raised{z-index:11!important}
+.drag-help{font-size:11px;color:#76818a;line-height:1.4}
+@media(max-width:760px){.events-row{height:415px;min-height:415px}}
+@media print{.event-card{translate:none!important}.event-thread{display:none}}
 </style>
 </head>
 <body>
@@ -41,8 +51,8 @@ body{padding-bottom:92px}
 <header class="masthead"><div><div class="eyebrow">Lycée Honoré d'Urfé · Progression annuelle</div><h1>Une année <em>de littérature.</em></h1><p class="intro">Français · Première ST2S3 &nbsp;—&nbsp; Une cartographie des œuvres, des apprentissages et des échéances, de septembre à juin.</p></div><div class="year-badge"><strong>26 / 27</strong><small>Année scolaire</small></div></header>
 <section class="overview" aria-label="Objectifs de l'année"><div class="metric"><span class="number">04 <small>objets d'étude</small></span><span class="caption">De Graffigny à Musset</span></div><div class="metric"><span class="number">12 <small>explications</small></span><span class="caption">Objectif pour l'oral</span></div><div class="metric"><span class="number">03 <small>bacs blancs</small></span><span class="caption">Évaluations jalons</span></div><div class="metric"><span class="number">08 <small>œuvres</small></span><span class="caption">4 intégrales + 4 cursives</span></div></section>
 <section class="art-section" aria-labelledby="art-title"><div class="art-heading"><h2 id="art-title">Quatre œuvres, quatre univers</h2><p>Portraits et iconographie historique · source Wikimedia Commons</p></div><div class="art-gallery"><article class="art-card" style="border-top:3px solid #b76d53"><img class="art-image" loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Grafigny.jpg?width=440" alt="Portrait gravé par Louis-Jacques Cathelin, d’après Garand" referrerpolicy="no-referrer"><div class="art-info"><span class="art-kicker">Séquence 1 · XVIIIe siècle</span><span class="art-author">Françoise de Graffigny</span><span class="art-work">Lettres d’une Péruvienne</span><a class="art-credit" href="https://commons.wikimedia.org/wiki/File:Grafigny.jpg" target="_blank" rel="noopener noreferrer" title="Portrait gravé par Louis-Jacques Cathelin, d’après Garand">Voir la source ↗</a></div></article><article class="art-card" style="border-top:3px solid #527c92"><img class="art-image" loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Rimbaud-Carjat-02.jpg?width=440" alt="Photographie d’Étienne Carjat, 1871" referrerpolicy="no-referrer"><div class="art-info"><span class="art-kicker">Séquence 2 · XIXe siècle</span><span class="art-author">Arthur Rimbaud</span><span class="art-work">Cahiers de Douai</span><a class="art-credit" href="https://commons.wikimedia.org/wiki/File:Rimbaud-Carjat-02.jpg" target="_blank" rel="noopener noreferrer" title="Photographie d’Étienne Carjat, 1871">Voir la source ↗</a></div></article><article class="art-card" style="border-top:3px solid #647764"><img class="art-image" loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Lancelot%20passant%20le%20pont%20de%20l%27%C3%89p%C3%A9e.jpg?width=440" alt="Enluminure de Lancelot, atelier d’Évrard d’Espinques, vers 1475" referrerpolicy="no-referrer"><div class="art-info"><span class="art-kicker">Séquence 3 · Moyen Âge</span><span class="art-author">Chrétien de Troyes</span><span class="art-work">Le Chevalier de la charrette</span><a class="art-credit" href="https://commons.wikimedia.org/wiki/File:Lancelot_passant_le_pont_de_l%27%C3%89p%C3%A9e.jpg" target="_blank" rel="noopener noreferrer" title="Enluminure de Lancelot, atelier d’Évrard d’Espinques, vers 1475">Voir la source ↗</a></div></article><article class="art-card" style="border-top:3px solid #956c92"><img class="art-image" loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Landelle%2C%20Charles%20-%20Alfred%20de%20Musset%20-%20Mus%C3%A9e%20d%27Orsay.png?width=440" alt="Portrait par Charles Landelle, 1854" referrerpolicy="no-referrer"><div class="art-info"><span class="art-kicker">Séquence 4 · XIXe siècle</span><span class="art-author">Alfred de Musset</span><span class="art-work">On ne badine pas avec l’amour</span><a class="art-credit" href="https://commons.wikimedia.org/wiki/File:Landelle%2C_Charles_-_Alfred_de_Musset_-_Mus%C3%A9e_d%27Orsay.png" target="_blank" rel="noopener noreferrer" title="Portrait par Charles Landelle, 1854">Voir la source ↗</a></div></article></div></section>
-<div class="section-heading"><div><h2>La traversée de l'année</h2><p>Une frise volontairement large · Faire défiler horizontalement pour parcourir l'année</p></div><div class="actions"><button class="action" id="prev" title="Reculer de deux mois">← Précédent</button><button class="action primary" id="now">Aujourd'hui</button><button class="action" id="next" title="Avancer de deux mois">Suivant →</button></div></div>
-<div class="timeline-frame"><div class="timeline-scroll" id="scroller" role="region" aria-label="Frise chronologique annuelle à défilement horizontal" tabindex="0"><div class="timeline-inner" id="timeline"></div></div><div class="timeline-key"><span class="key"><i style="background:#b76d53"></i>Graffigny</span><span class="key"><i style="background:#527c92"></i>Rimbaud</span><span class="key"><i style="background:#647764"></i>Chrétien de Troyes</span><span class="key"><i style="background:#956c92"></i>Musset</span><span class="key"><i style="background:#a98948"></i>Transversal</span><span class="legend-right">Cliquer sur un élément pour le détail</span></div></div>
+<div class="section-heading"><div><h2>La traversée de l'année</h2><p>Une frise volontairement large · Défilement horizontal · Glisser les bulles pour dégager les événements cachés</p></div><div class="actions"><button class="action" id="resetCards" title="Remettre les bulles à leur place d’origine">↺ Replacer les bulles</button><button class="action" id="prev" title="Reculer de deux mois">← Précédent</button><button class="action primary" id="now">Aujourd'hui</button><button class="action" id="next" title="Avancer de deux mois">Suivant →</button></div></div>
+<div class="timeline-frame"><div class="timeline-scroll" id="scroller" role="region" aria-label="Frise chronologique annuelle à défilement horizontal" tabindex="0"><div class="timeline-inner" id="timeline"></div></div><div class="timeline-key"><span class="key"><i style="background:#b76d53"></i>Graffigny</span><span class="key"><i style="background:#527c92"></i>Rimbaud</span><span class="key"><i style="background:#647764"></i>Chrétien de Troyes</span><span class="key"><i style="background:#956c92"></i>Musset</span><span class="key"><i style="background:#a98948"></i>Transversal</span><span class="legend-right">Clic : détail · Glisser : déplacer une bulle</span></div></div>
 <div class="scrub"><span class="scrub-label">Sept. 2026</span><input id="scrubber" type="range" min="0" max="100" value="0" aria-label="Naviguer dans la frise"><span class="scrub-label">Juin 2027</span></div>
 <section class="details" aria-label="Repères pédagogiques"><article class="detail"><h3>Le cap pédagogique</h3><ul><li><b>12 explications linéaires</b>, dont trois pour chaque objet d'étude.</li><li><b>Écrit :</b> contraction et essai, puis commentaire.</li><li><b>Oral :</b> explication, grammaire et entretien sur la lecture cursive.</li><li><b>Langue :</b> trois notions de grammaire, à commencer par la négation.</li></ul></article><article class="detail"><h3>Points de vigilance · 11 novembre</h3><ul><li><b class="critical-text">Oral :</b> rituel « un élève, cinq minutes » à lancer.</li><li><b class="critical-text">Rimbaud :</b> fenêtre courte à partir du 23 novembre.</li><li><b>Graffigny :</b> troisième EL et contrôles de lecture à finaliser.</li><li><b>Écrit :</b> copies du DS contraction du 9 novembre à corriger.</li></ul></article><article class="detail"><h3>Décisions prochaines</h3><ul><li><b>EL3 Graffigny :</b> choisir le texte du parcours.</li><li><b>20 novembre :</b> contrôles de lecture proposés, à confirmer.</li><li><b>30 novembre :</b> séance inspectée, piste « négation ».</li><li><b>Avant Noël :</b> viser deux EL des <i>Cahiers</i> et une EL de parcours.</li></ul></article></section>
 <p class="footnote">Frise conçue à partir de la roadmap du 11 novembre 2026. Les dates « proposées », « planifiées » ou approximatives restent indicatives. Défilement possible avec la barre horizontale, les boutons, ou Maj + molette.</p>
@@ -138,7 +148,70 @@ function makeRow(type,title,description,meta,index,heightClass){const row=docume
 const ax=makeRow('axis-row axis','','','','');for(let i=0;i<10;i++){const d=D(2026,9+i,1),next=D(2026,10+i,1),el=document.createElement('div');el.className='month';el.style.left=x(d)+'px';el.style.width=x(next)-x(d)+'px';el.innerHTML=months[i]+`<small>${i<4?'2026':'2027'}</small>`;ax.appendChild(el);for(let j=7;j<32;j+=7){const tick=D(d.getFullYear(),d.getMonth()+1,j);if(tick<next){const t=document.createElement('span');t.className='weektick';t.style.left=x(tick)+'px';t.textContent=j;ax.appendChild(t)}}}
 const events=makeRow('events-row','Dates à retenir','Devoirs, échéances et moments structurants','<span class="status-dot" style="background:#b77d5a"></span> Sélectionner un jalon','01 · JALONS');deco(events);
 const shortened=t=>t.replace(/\s*\([^)]*\)/g,'').replace(/\s*[·—].*$/,'').trim();
-const occupied=[];milestones.forEach((m,i)=>{const left=x(m.d),title=shortened(m.t),slot=(()=>{for(let k=0;k<4;k++){if((occupied[k]??-999)+160<=left){occupied[k]=left;return k}}return 4})();const b=document.createElement('button');b.type='button';b.className='event'+((/Bac blanc|BB n°|EAF/.test(m.t))?' critical':'')+((/Inspection/.test(m.t))?' inspection':'');b.style.left=left+'px';b.style.top=(12+slot*65)+'px';b.innerHTML=`<span class="event-pin"></span><span class="event-stem"></span><span class="event-card"><span class="event-date">${m.d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short'})}</span><span class="event-title"></span></span>`;b.querySelector('.event-title').textContent=title.length>39?title.slice(0,37)+'…':title;b.title=m.t;b.addEventListener('click',()=>modal(m.t,fdate(m.d),m.t));events.appendChild(b)});
+// Les bulles restent ancrées sur leur date. Seule leur carte se déplace.
+const resetCards=[];
+function attachDrag(b){
+  const card=b.querySelector('.event-card');
+  const wire=document.createElement('span');wire.className='event-thread';
+  b.insertBefore(wire,card);
+  let dx=0,dy=0, active=null, wasMoved=false, suppressClick=false;
+  const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
+  function draw(){
+    card.style.translate=`${dx}px ${dy}px`;
+    // Le fil part du jalon d'origine vers le point du rectangle le plus proche.
+    const baseX=5,baseY=5;
+    const cardX=dx-5, cardY=26+dy;
+    const nearX=clamp(baseX,cardX,cardX+card.offsetWidth);
+    const nearY=clamp(baseY,cardY,cardY+card.offsetHeight);
+    const distance=Math.hypot(nearX-baseX,nearY-baseY);
+    wire.style.width=`${distance}px`;
+    wire.style.transform=`rotate(${Math.atan2(nearY-baseY,nearX-baseX)}rad)`;
+  }
+  card.addEventListener('pointerdown', e=>{
+    if(e.button!==0||active)return;
+    active={id:e.pointerId,x:e.clientX,y:e.clientY,dx,dy};
+    wasMoved=false;b.classList.add('is-raised');
+    card.setPointerCapture(e.pointerId);
+  });
+  card.addEventListener('pointermove',e=>{
+    if(!active||active.id!==e.pointerId)return;
+    const mx=e.clientX-active.x,my=e.clientY-active.y;
+    if(!wasMoved && Math.hypot(mx,my)<5)return;
+    wasMoved=true;card.classList.add('dragging');
+    const originX=parseFloat(b.style.left)-5,originY=parseFloat(b.style.top)+26;
+    const canvas=b.parentElement;
+    dx=clamp(active.dx+mx,-originX,canvas.clientWidth-card.offsetWidth-originX);
+    dy=clamp(active.dy+my,-originY,canvas.clientHeight-card.offsetHeight-originY);
+    draw();
+  });
+  const finish=e=>{
+    if(!active||active.id!==e.pointerId)return;
+    if(wasMoved)suppressClick=true;
+    active=null;wasMoved=false;card.classList.remove('dragging');
+    if(card.hasPointerCapture(e.pointerId))card.releasePointerCapture(e.pointerId);
+  };
+  card.addEventListener('pointerup',finish);
+  card.addEventListener('pointercancel',finish);
+  b.addEventListener('click',e=>{
+    if(suppressClick){suppressClick=false;e.preventDefault();return;}
+    modal(b.dataset.fulltitle,b.dataset.date,b.dataset.fulltitle);
+  });
+  resetCards.push(()=>{dx=0;dy=0;b.classList.remove('is-raised');draw()});
+  draw();
+}
+const occupied=[];
+milestones.forEach((m,i)=>{
+  const left=x(m.d),title=shortened(m.t);
+  const slot=(()=>{for(let k=0;k<5;k++){if((occupied[k]??-999)+166<=left){occupied[k]=left;return k}}return 4})();
+  const b=document.createElement('button');b.type='button';
+  b.className='event'+((/Bac blanc|BB n°|EAF/.test(m.t))?' critical':'')+((/Inspection/.test(m.t))?' inspection':'');
+  b.style.left=left+'px';b.style.top=(12+slot*73)+'px';
+  b.innerHTML=`<span class="event-pin"></span><span class="event-stem"></span><span class="event-card"><span class="event-date">${m.d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short'})}</span><span class="event-title"></span></span>`;
+  b.querySelector('.event-title').textContent=title.length>58?title.slice(0,56)+'…':title;
+  b.dataset.fulltitle=m.t;b.dataset.date=fdate(m.d);b.title=m.t;
+  events.appendChild(b);attachDrag(b);
+});
+document.getElementById('resetCards').addEventListener('click',()=>resetCards.forEach(reset=>reset()));
 const palette=['#b76d53','#527c92','#647764','#956c92','#a98948'];
 const descriptions=[['Lettres d’une Péruvienne','Parcours « Un nouvel univers s’est offert à mes yeux »'],['Cahiers de Douai','Parcours « Émancipations créatrices »'],['Le Chevalier de la charrette','Parcours « Héroïsme et amour »'],['On ne badine pas avec l’amour','Parcours « Les jeux du cœur et de la parole »'],['Langue, écrit et oral','Compétences travaillées tout au long de l’année']];
 lanes.forEach((l,i)=>{const height=i===0||i===4?'extended':i===1?'':'compact';let title=['Graffigny','Rimbaud','Chrétien de Troyes','Musset','Compétences'][i];const meta=`<span class="status-dot" style="background:${palette[i]}"></span>${i===0?'En cours':i===1?'À lancer prochainement':i===4?'Travail transversal':'Planifié'}`;const canvas=makeRow('work-row',title,descriptions[i].join('<br>'),meta,`0${i+2} · SÉQUENCE`,height);deco(canvas);const vertical=[60,104,20,60,105];l.rows.forEach((r,j)=>{const el=document.createElement('button');el.type='button';const planned=!r.t;el.className='segment'+(planned?' planned':'')+(i===4&&j>1?' track-long':'');el.style.left=x(r.s)+'px';el.style.width=Math.max(6,x(r.e)-x(r.s))+'px';el.style.top=(planned?11:(i===0?[54,92,54,96][j]:i===1?[54,92][j-1]??54:i===4?[53,93,53,101][j]:54))+'px';// explicit non-overlapping visual tracks
