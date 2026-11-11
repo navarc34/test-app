@@ -50,6 +50,7 @@ body{padding-bottom:92px}
 .event:hover .event-card.dragging{transform:none}
 .event-pin{position:relative;z-index:2}.event-stem{visibility:hidden}
 .event-thread{position:absolute;left:5px;top:5px;height:1px;background:#a9a79f;transform-origin:0 0;pointer-events:none}
+.timeline-scroll{cursor:grab}.timeline-scroll.panning{scroll-behavior:auto!important}.timeline-scroll.panning,.timeline-scroll.panning *{cursor:grabbing!important;user-select:none}
 </style>
 </head>
 <body>
@@ -174,6 +175,13 @@ if(i===1&&!planned){el.style.top=j===1?'55px':'96px'}
 if(i===4&&!planned){el.style.top=[53,98,53,105][j]+'px';el.style.height='30px'}
 el.style.background=planned?palette[i]:(i===4?[palette[i],palette[i],'#8775a6','#648b77'][j]:palette[i]);el.textContent=r.t||'';if(r.p==='#e0b04f')el.classList.add('light');el.title=clean(r.tip);if(planned){el.tabIndex=-1;el.setAttribute('aria-hidden','true')}else el.addEventListener('click',()=>modal(title+' · '+r.t,`${fdate(r.s)} → ${fdate(r.e)}`,clean(r.tip),el));canvas.appendChild(el)})});
 document.getElementById('resetCards').onclick=()=>resets.forEach(f=>f());
+/* saisir la frise pour la faire défiler (souris/stylet ; le tactile défile déjà nativement) */
+(()=>{let pan=false,moved=false,sx,sy,sl,st;
+scroller.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'||e.button>0||e.target.closest('.event-card'))return;pan=true;moved=false;sx=e.clientX;sy=e.clientY;sl=scroller.scrollLeft;st=scroller.scrollTop});
+scroller.addEventListener('pointermove',e=>{if(!pan)return;const mx=e.clientX-sx,my=e.clientY-sy;if(!moved){if(Math.hypot(mx,my)<4)return;moved=true;scroller.setPointerCapture(e.pointerId);scroller.classList.add('panning')}scroller.scrollTo({left:sl-mx,top:st-my,behavior:'instant'})});
+const end=()=>{pan=false;scroller.classList.remove('panning')};
+scroller.addEventListener('pointerup',end);scroller.addEventListener('pointercancel',end);
+scroller.addEventListener('click',e=>{if(moved){e.stopPropagation();e.preventDefault();moved=false}},true)})();
 const scrub=document.getElementById('scrubber');const maxScroll=()=>scroller.scrollWidth-scroller.clientWidth;function sync(){scrub.value=maxScroll()>0?Math.round(scroller.scrollLeft/maxScroll()*100):0}scroller.addEventListener('scroll',sync,{passive:true});scrub.addEventListener('input',()=>scroller.scrollLeft=maxScroll()*Number(scrub.value)/100);document.getElementById('prev').onclick=()=>scroller.scrollBy({left:-650,behavior:'smooth'});document.getElementById('next').onclick=()=>scroller.scrollBy({left:650,behavior:'smooth'});document.getElementById('now').onclick=()=>scroller.scrollTo({left:Math.max(0,x(TODAY)-scroller.clientWidth*.45),behavior:'smooth'});scroller.addEventListener('wheel',e=>{if(e.shiftKey&&Math.abs(e.deltaY)>0){e.preventDefault();scroller.scrollLeft+=e.deltaY}},{passive:false});function close(){document.getElementById('backdrop').classList.remove('open');if(lastFocus&&lastFocus.focus)lastFocus.focus()}document.getElementById('close').onclick=close;document.getElementById('backdrop').onclick=e=>{if(e.target.id==='backdrop')close()};document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
 window.addEventListener('load',()=>{scroller.scrollLeft=Math.max(0,x(D(2026,10,25))-100);sync()});
 
