@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Spécialité latin · Lycée Honoré d’Urfé · 2026-27</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Libre+Franklin:wght@400;500&display=swap">
+<style>
+:root{--paper:#eef0ec;--ink:#16221b;--mute:#53625a;--ivy:#2d5a43;--leaf:#5f8f6b;--rule:#c9d1c8;--crim:#7b2433;--brass:#8a6d28;--card:#f7f8f5;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#111a15;--ink:#e5ebe4;--mute:#9fb0a5;--ivy:#86b995;--leaf:#5f9a72;--rule:#2b3a31;--crim:#d98a97;--brass:#cdae63;--card:#17231c}}
+:root[data-theme="dark"]{--paper:#111a15;--ink:#e5ebe4;--mute:#9fb0a5;--ivy:#86b995;--leaf:#5f9a72;--rule:#2b3a31;--crim:#d98a97;--brass:#cdae63;--card:#17231c}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.6 "Libre Franklin",system-ui,sans-serif}
+h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;margin:0;line-height:1.1}
+header{max-width:760px;margin:0 auto;padding:72px 24px 40px;text-align:center}
+header h1{font-size:clamp(2.6rem,7vw,4.4rem);letter-spacing:-.01em}
+header p{font-family:"Cormorant Garamond",Georgia,serif;font-style:italic;font-size:1.35rem;color:var(--mute);margin:14px auto 0;max-width:34ch}
+header small{display:block;margin-top:18px;color:var(--mute);font-size:.85rem}
+.tl{position:relative;max-width:1000px;margin:0 auto;padding:20px 20px 120px}
+#stem{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.ph{position:relative;z-index:2;display:flex;justify-content:center;margin:56px 0 28px}
+.ph h2{background:var(--paper);padding:6px 22px;font-size:1.7rem;font-style:italic;color:var(--ivy);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.row{position:relative;z-index:2;display:grid;grid-template-columns:1fr 84px 1fr;align-items:center;min-height:130px;margin:14px 0}
+.row .txt{max-width:360px}
+.row:nth-of-type(odd) .txt{grid-column:1;justify-self:end;text-align:right}
+.row:nth-of-type(even) .txt{grid-column:3;justify-self:start}
+.row .bub{grid-column:2;grid-row:1}
+.date{font-family:"Cormorant Garamond",Georgia,serif;font-style:italic;font-size:1.1rem;color:var(--brass)}
+.txt h3{font-size:1.55rem;margin:2px 0 6px}
+.txt p{margin:0;color:var(--mute);font-size:.93rem;line-height:1.55}
+.mot{font-family:"Cormorant Garamond",Georgia,serif;font-size:1.05rem;color:var(--crim);font-weight:600;letter-spacing:.04em}
+.tag{display:inline-block;font-size:.78rem;color:var(--crim);border:1px solid currentColor;border-radius:99px;padding:0 9px;margin-left:8px;vertical-align:1px}
+.bub{width:68px;height:68px;border-radius:50%;border:1.5px solid var(--ivy);background:var(--card);color:var(--ivy);display:grid;place-items:center;cursor:pointer;justify-self:center;padding:0;transition:transform .2s,background .2s,color .2s}
+.bub:hover,.bub:focus-visible,.bub[aria-expanded=true]{background:var(--ivy);color:var(--paper);transform:scale(1.08)}
+.bub:focus-visible{outline:3px solid var(--brass);outline-offset:3px}
+.bub svg{width:34px;height:34px}
+.bub.soon{border-style:dashed;border-color:var(--crim);color:var(--crim)}
+#dr{position:fixed;top:0;right:0;bottom:0;width:min(500px,100%);background:var(--card);border-left:1px solid var(--rule);z-index:20;transform:translateX(102%);transition:transform .35s ease;overflow:auto;padding:calc(28px + env(safe-area-inset-top,0px)) 28px calc(40px + env(safe-area-inset-bottom,0px));box-shadow:-12px 0 40px rgba(0,0,0,.12)}
+#dr.on{transform:none}
+#dr .ic{width:76px;height:76px;color:var(--ivy);display:block;margin-bottom:10px}
+#dr h2{font-size:2.1rem;margin:4px 0 4px}
+#dr h4{font-family:"Cormorant Garamond",Georgia,serif;font-size:1.25rem;font-style:italic;color:var(--ivy);margin:26px 0 6px;border-bottom:1px solid var(--rule);padding-bottom:4px}
+#dr ul{margin:0;padding-left:1.1em}#dr li{margin:5px 0}
+#dr .sum{font-family:"Cormorant Garamond",Georgia,serif;font-size:1.2rem;line-height:1.45}
+#dr .doc{font-size:.85rem;color:var(--mute)}
+#x{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:16px;background:none;border:1px solid var(--rule);color:var(--ink);border-radius:99px;padding:4px 14px;font:inherit;font-size:.85rem;cursor:pointer}
+#x:focus-visible{outline:3px solid var(--brass)}
+@media (max-width:760px){
+.row{grid-template-columns:84px 1fr}
+.row .bub{grid-column:1}
+.row:nth-of-type(n) .txt{grid-column:2;grid-row:1;justify-self:start;text-align:left}
+.ph{justify-content:flex-start;padding-left:20px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="laurel" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M16 28C8 25 5 16 8 6M16 28c8-3 11-12 8-22M9 11l-3-1M7.5 16l-3 0M10 21l-3 2M23 11l3-1M24.5 16l3 0M22 21l3 2"/></symbol>
+<symbol id="column" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M7 6h18M9 9h14M12 9v16M16 9v16M20 9v16M9 25h14M7 28h18"/></symbol>
+<symbol id="book" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M16 9C12 6 7 6 4 7v17c3-1 8-1 12 2 4-3 9-3 12-2V7c-3-1-8-1-12 2zM16 9v17"/></symbol>
+<symbol id="scroll" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6h14a2 2 0 0 1 2 2v16a3 3 0 0 0 3 3H12a3 3 0 0 1-3-3V8a2 2 0 0 0-2-2h3M14 12h8M14 16h8M14 20h5"/></symbol>
+<symbol id="ship" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h24l-4 6H8zM16 4v16M16 5c5 2 8 7 8 12h-8M16 8c-3 2-5 5-5 9h5"/></symbol>
+</defs></svg>
+<header>
+<h1>Le lierre de l’année 2026-27</h1>
+<p>Spécialité latin, lycée Honoré d’Urfé : de Romulus à Auguste, séance après séance.</p>
+<small>Séquence 1, « La cité entre réalités et utopies » · cliquez sur une bulle pour ouvrir la séance</small>
+</header>
+<main class="tl" id="tl"><svg id="stem" aria-hidden="true"></svg></main>
+<aside id="dr" role="dialog" aria-modal="false" aria-labelledby="dt" tabindex="-1"><button id="x">Fermer</button><div id="dc"></div></aside>
+<script>
+const P=["Fonder Rome","Le bon prince","Auguste, un nouveau pouvoir","Virgile et l’auctoritas","Suite de l’année"];
+const S=[
+[0,"ven. 4 sept.","Fonder Rome","ship","PIETAS","","Entrée dans l’objet d’étude par la fondation de Rome : l’épopée de Virgile face au roman national de Tite-Live.",["Rappel des principales figures de la guerre de Troie","Origines indo-européennes du latin","Virgile et Tite-Live : deux approches du mythe de fondation","Capsule grammaticale : premiers fondamentaux de la langue latine","Lexique, mot-concept : PIETAS (d’Énée)"],"Question pour la séance suivante : « Pourquoi Romulus doit-il tuer son frère pour fonder Rome ? »",[]],
+[0,"lun. 7 sept.","Le sillon de Romulus","scroll","POMERIUM","","Le documentaire de Patrick Boucheron éclaire le fratricide fondateur, entre mythe et archéologie.",["Le sillon : limite religieuse, administrative et politique du pomerium","Comment concilier le fratricide initial avec la grandeur de Rome ?","Lapis Niger : fiction politique et découvertes archéologiques","Langue : dialogue magister–discipuli, cas et fonctions, déclinaisons repérées à partir du génitif","Tite-Live, Ab urbe condita I, 6-7 : le champ lexical de la violence"],"Paragraphe d’une demi-page : la violence dans l’accès au pouvoir, de la fondation de Rome à l’histoire contemporaine.",["Eleve_travail_prochaine_seance.pdf"]],
+[0,"ven. 11 sept.","Repères gréco-romains","column","","","Construire une vision d’ensemble du continuum entre mondes grec et romain.",["Construction et correction d’une frise chronologique : périodes, événements, auteurs","Carte diachronique de la Méditerranée antique","Reconnaissance iconographique des grands repères","Latin oralisé avec Ecce Larentia ; identification cas / fonction et traduction","Virgile, Énéide I, 273-277 : Troie → Énée → Romulus → Rome"],"",["Frise Grèce–Rome (A3)","Mediterranée_antique.png","Leçon 1, Via Latina"]],
+[1,"lun. 14 sept.","Entrer dans la figure du prince","scroll","","","Premier corpus sur le « bon prince » : Quinte-Curce, Rabelais, Machiavel.",["Révision des repères à partir de la frise","Nominatif, vocatif, accusatif et certains ablatifs","Texte de Lhomond : remise en ordre, premier travail au juxtalinéaire","Quinte-Curce (Vie d’Alexandre VIII, 8), Rabelais (Gargantua, ch. 50), Machiavel (Le Prince, ch. XVII)","Début d’un tableau à trois colonnes : ce qui caractérise le bon prince"],"Contrôle du 18/09 : guerre de Troie et protagonistes, Romulus et Remus, frise chronologique, 1re déclinaison, structure de la phrase latine.",[]],
+[1,"ven. 18 sept.","Premier contrôle","scroll","","Contrôle","Grands repères antiques et langue ; puis travail sur les temps de l’indicatif.",["Devoir sur table : repères antiques et fondamentaux de la langue","Infectum et perfectum : radical, suffixe, désinence","Identifier et traduire un verbe dans un texte","Suite du classement des caractérisations du bon prince"],"",[]],
+[1,"lun. 21 sept.","Interroger en latin","book","","","Correction du contrôle, puis questions et réponses en latin.",["Retour sur les erreurs du contrôle","Ecce Larentia : -ne, num, nonne ; réponses ita (oui) et minime (non)","Lexique et procédés qui construisent la figure du prince idéal"],"Apprendre les mots de la 1re déclinaison (fiche 1) ; relire la fiche de conjugaison ; lire Suétone et repérer les formes verbales.",[]],
+[1,"ven. 25 sept.","Méthode de l’essai","scroll","","","Gouverner, du mythe à l’histoire : le prince idéal vu par les historiens, les orateurs et les peintres.",["Contrôle rituel #1 : vocabulaire et traduction, 1re déclinaison","Méthodologie de l’essai, avec exemple","Vidéo de Pierre Rosanvallon sur le bon gouvernement ; fresque de Lorenzetti","Suétone sur Néron : oralisation, verbes, regard de l’historien","Pline le Jeune, Panégyrique de Trajan : exclamatives, hyperboles ; paragraphe argumenté"],"",["Construire un paragraphe argumenté.pdf","Méthodologie de l’essai (Hatier)"]],
+[1,"lun. 28 sept.","Grammaire et essai","book","","","Approfondissement morphologique et préparation de l’épreuve de spécialité.",["2e déclinaison : ludus, puer, monstrum","Mise en application : exercices de grammaire et de traduction","Révisions de conjugaison","Rappels de méthodologie de l’essai","Rappels historiques sur Auguste"],"",[]],
+[2,"ven. 2 oct.","Auguste, premier portrait","laurel","","Distanciel","Classe absente : vidéo, fiche et corpus de Suétone pour dessiner Auguste.",["Vidéo sur Auguste ; fiche « Auguste, fondateur de l’Empire romain »","Corpus de Suétone : deux textes, caractéristiques d’Auguste et termes latins associés","Lire Ecce Larentia II ; adjectifs de la 1re classe","Apprendre sum au présent et au parfait"],"Pour le 05/10 : travail sur Suétone, adjectifs, sum. Contrôle rituel #2 reporté.",["Corpus 1 · Portrait d’Auguste","Fiche Sum","Adjectifs Pronoms"]],
+[2,"lun. 5 oct.","L’Auguste de Prima Porta","laurel","","Distanciel","Comment Auguste met-il en scène son image pour affirmer un nouveau type de pouvoir ?",["Observer la statue : quels éléments disent l’homme exceptionnel ? hypothèses","Choisir deux portraits officiels de présidents de la Ve République et les comparer à Prima Porta","Écouter Ecce Larentia II ; exercices 10, 11, 13, 14 et 16"],"Pour le 09/10 : poursuivre Ecce Larentia II. Contrôles rituels #2 et #3 décalés.",["Auguste polychromie.jpg","Auguste cuirasse gros plan.jpg"]],
+[2,"ven. 9 oct.","Auguste, un nouveau pouvoir","laurel","","Autonomie","Un mot-concept latin confronté à des textes modernes et contemporains.",["Lire l’exemplier, de Machiavel à Charles de Gaulle : quelle notion politique commune ?","Choisir deux auteurs aux conceptions opposées, avec une citation de chacun","Rapprocher la notion du nom Auguste, côté étymologie","Lire Ecce Larentia III et tenter de le traduire"],"Pour le 16/10 : relire et traduire Ecce Larentia II et III.",["Textes_Seq1_Seance3.pdf","Ecce-Larentia-III.pdf"]],
+[2,"lun. 12 oct.","Bilan d’Auguste, découverte de Virgile","ship","","Visio","Mettre au propre l’étude d’Auguste (note bonus) et découvrir l’Énéide.",["Dépôt : Suétone, Prima Porta, comparaison avec deux présidents, deux conceptions de l’auctoritas","Vidéos : TED-Ed « Why should you read Virgil’s Aeneid? » et La P’tite Librairie","Notes : Virgile et son contexte, l’épopée, Homère, Énéide et Auguste","Relire Ecce Larentia II et III à voix haute"],"Pour le 13/10 : dépôt du bilan dans l’espace élève.",[]],
+[3,"ven. 16 oct.","Lire et traduire","book","","Visio","Lecture fluide et traduction commentée d’Ecce Larentia II et III.",["Repérage des déclinaisons et des cas","Verbes conjugués au présent de l’indicatif","Pronoms démonstratifs, usage anaphorique et possessif ; rappels sur l’interrogation"],"Pour le 02/11 : lire l’Énéide, chants I à IV, « le crayon à la main » (GF Flammarion). Contrôles rituels #2 et #3 ; vocabulaire des 2e et 3e déclinaisons, verbes des 1re et 2e conjugaisons, sum.",[]],
+[3,"lun. 2 nov.","Retour de l’Énéide","ship","","","Vérifier la lecture, évaluer les automatismes, caractériser Auguste par Suétone et la statuaire.",["Bilan de lecture : intertextualité avec l’Odyssée (Charybde et Scylla)","Turner, Didon bâtissant Carthage : peinture et épopée","Contrôle rituel #2","Ecce Larentia II : lecture oralisée, exercices 10 à 14/15","Corpus Suétone : un Auguste proche du divin, refusant le titre de dominus, humble, conquérant, pacificateur ; début de Prima Porta"],"",["Turner_Dido_Building_Carthage.jpg"]],
+[3,"ven. 6 nov.","Auguste et l’auctoritas","laurel","AUCTORITAS","","Construire le mot-concept, des images du pouvoir à la prophétie de Jupiter.",["Retour sur le DM : Prima Porta rapproché de Suétone","Portrait officiel de Charles de Gaulle : les livres, l’héritage humaniste, un écho de la dimension religieuse augustéenne ?","Énéide I, 274-295 en latin : roman national, empire sans limites","Temps verbaux (futur, présent, parfait), énonciation : Vénus supplie Jupiter","Traduction guidée : excipiet, pono, dedi"],"Pour le 13/11 : contrôle rituel #3 sur le chapitre 1 d’Ecce Larentia (leçons I à III) ; réviser le vocabulaire de la fiche jointe.",["Auctoritas_mot_concept.pdf","Énéide I, 274-295 + lexique","Voc_essentiel Cap. I"]],
+[3,"ven. 13 nov.","Contrôle rituel #3","scroll","","Contrôle","Vocabulaire et grammaire du chapitre 1 d’Ecce Larentia.",["Leçons I à III : vocabulaire essentiel du chapitre 1"],"",[]],
+[4,"lun. 16 nov.","Séance à venir","column","","À venir","Le contenu sera publié après la séance.",[],"",[]],
+[4,"ven. 20 nov.","Séance à venir","column","","À venir","Le contenu sera publié après la séance.",[],"",[]]];
+const tl=document.getElementById("tl"),stem=document.getElementById("stem"),dr=document.getElementById("dr"),dc=document.getElementById("dc");
+const esc=s=>s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+let last=-1,html="";
+S.forEach((s,i)=>{
+ if(s[0]!==last){last=s[0];html+=`<div class="ph"><h2>${P[last]}</h2></div>`}
+ const soon=s[5]==="À venir"||s[5]==="Non publié";
+ html+=`<div class="row"><div class="txt"><span class="date">${s[1]}</span>${s[5]?`<span class="tag">${s[5].toLowerCase()}</span>`:""}<h3>${esc(s[2])}</h3>${s[4]?`<div class="mot">${s[4]}</div>`:""}<p>${esc(s[6])}</p></div><button class="bub${soon?" soon":""}" data-i="${i}" aria-expanded="false" aria-label="Ouvrir la séance : ${esc(s[2])}"><svg><use href="#${s[3]}"/></svg></button></div>`});
+tl.insertAdjacentHTML("beforeend",html);
+function open(i,b){const s=S[i];document.querySelectorAll(".bub").forEach(x=>x.setAttribute("aria-expanded","false"));b.setAttribute("aria-expanded","true");
+ dc.innerHTML=`<svg class="ic"><use href="#${s[3]}"/></svg><div class="date">${s[1]}${s[5]?" · "+s[5].toLowerCase():""}</div><h2 id="dt">${esc(s[2])}</h2>${s[4]?`<div class="mot">${s[4]}</div>`:""}<h4>En bref</h4><p class="sum">${esc(s[6])}</p>${s[7].length?`<h4>Contenu de la séance</h4><ul>${s[7].map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}${s[8]?`<h4>À faire</h4><p>${esc(s[8])}</p>`:""}${s[9].length?`<h4>Documents</h4><p class="doc">${s[9].map(esc).join(" · ")}</p>`:""}`;
+ dr.classList.add("on");dr.scrollTop=0;dr.focus({preventScroll:true})}
+function shut(){dr.classList.remove("on");document.querySelectorAll(".bub").forEach(x=>x.setAttribute("aria-expanded","false"))}
+tl.addEventListener("click",e=>{const b=e.target.closest(".bub");if(b)open(+b.dataset.i,b)});
+document.getElementById("x").onclick=shut;addEventListener("keydown",e=>{if(e.key==="Escape")shut()});
+function draw(){
+ const NS="http://www.w3.org/2000/svg",R=tl.getBoundingClientRect(),bs=[...tl.querySelectorAll(".bub")].map(b=>{const r=b.getBoundingClientRect();return[r.left+r.width/2-R.left,r.top+r.height/2-R.top]});
+ const mob=innerWidth<=760,amp=mob?16:46;stem.setAttribute("viewBox",`0 0 ${R.width} ${R.height}`);
+ let d=`M${bs[0][0]} 0 L${bs[0][0]} ${bs[0][1]-70}`;let prev=[bs[0][0],bs[0][1]-70];
+ bs.forEach(([x,y],k)=>{const s=k%2?-1:1;d+=` C${prev[0]+s*amp*1.6} ${prev[1]+(y-prev[1])*.45} ${x-s*amp*1.6} ${y-(y-prev[1])*.45} ${x} ${y}`;prev=[x,y]});
+ const end=prev[1]+140;d+=` C${prev[0]+amp} ${prev[1]+50} ${prev[0]-amp} ${prev[1]+90} ${prev[0]} ${end}`;
+ stem.innerHTML=`<path id="sp" d="${d}" fill="none" stroke="var(--ivy)" stroke-width="3" stroke-linecap="round"/>`;
+ const p=document.getElementById("sp"),L=p.getTotalLength();let k=0;
+ for(let l=30;l<L-10;l+=34){const a=p.getPointAtLength(l),b=p.getPointAtLength(l+2),ang=Math.atan2(b.y-a.y,b.x-a.x)*180/Math.PI,s=k%2?-1:1;k++;
+  const g=document.createElementNS(NS,"path");g.setAttribute("d","M0 0C6 -9 18 -9 26 0C18 9 6 9 0 0Z");
+  g.setAttribute("transform",`translate(${a.x} ${a.y}) rotate(${ang+s*(48+(k*13)%22)}) scale(${.7+((k*7)%5)/10})`);
+  g.setAttribute("fill",k%3?"var(--leaf)":"var(--ivy)");g.setAttribute("opacity",k%3?".75":".9");stem.appendChild(g);
+  if(k%4===0){const t=document.createElementNS(NS,"path");t.setAttribute("d",`M${a.x} ${a.y}q${s*16} 6 ${s*10} 18q-${s*6} 6 -${s*2} 0`);t.setAttribute("fill","none");t.setAttribute("stroke","var(--leaf)");t.setAttribute("stroke-width","1.2");stem.appendChild(t)}}
+}
+addEventListener("load",draw);addEventListener("resize",draw);document.fonts&&document.fonts.ready.then(draw);
+</script>
+</body>
+</html>
