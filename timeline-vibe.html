@@ -340,24 +340,6 @@ const mil=lane('','milestones',`<span class="no">01 · Jalons</span><h3>Dates à
   <p>Devoirs, échéances officielles et moments structurants de l'année.</p>
   <span class="tag"><span class="dot" style="background:#c2603f"></span>Cliquer pour le détail</span>`);
 decorate(mil);
-const used=[];
-MK.forEach(m=>{
-  const left=X(m.d);
-  let col=used.findIndex(u=>u+158<=left);
-  if(col<0){col=used.length}
-  used[col]=left;
-  const b=document.createElement('button');b.type='button';
-  b.className='mk'+(m.exam?' exam':'')+(m.insp?' insp':'')+(m.today?' today':'');
-  b.style.left=left+'px';b.style.top=(10+col*64)+'px';
-  const short=m.t.replace(/\s*\([^)]*\)/g,'');
-  b.innerHTML=`<span class="pin" style="${m.c?'background:'+m.c+';outline-color:'+m.c:''}"></span><span class="stem"></span><span class="box"><span class="d">${m.d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short'})}</span><span class="t"></span></span>`;
-  b.querySelector('.t').textContent=short.length>40?short.slice(0,38)+'…':short;
-  b.title=m.t;
-  b.addEventListener('click',()=>{if(b._moved){b._moved=false;return}pop('Jalon',fr(m.d),m.t)});
-  mil.appendChild(b);
-  makeDraggable(b);
-});
-
 /* ---- Bulles déplaçables : grab souris/doigt, fil de liaison vers l'origine ---- */
 const resets=[];
 function makeDraggable(b){
@@ -398,6 +380,23 @@ function makeDraggable(b){
   resets.push(()=>{dx=dy=0;b._moved=false;b.style.zIndex='';draw()});
 }
 document.getElementById('bReset').onclick=()=>resets.forEach(f=>f());
+const used=[];
+MK.forEach(m=>{
+  const left=X(m.d);
+  let col=used.findIndex(u=>u+158<=left);
+  if(col<0){col=used.length}
+  used[col]=left;
+  const b=document.createElement('button');b.type='button';
+  b.className='mk'+(m.exam?' exam':'')+(m.insp?' insp':'')+(m.today?' today':'');
+  b.style.left=left+'px';b.style.top=(10+col*64)+'px';
+  const short=m.t.replace(/\s*\([^)]*\)/g,'');
+  b.innerHTML=`<span class="pin" style="${m.c?'background:'+m.c+';outline-color:'+m.c:''}"></span><span class="stem"></span><span class="box"><span class="d">${m.d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short'})}</span><span class="t"></span></span>`;
+  b.querySelector('.t').textContent=short.length>40?short.slice(0,38)+'…':short;
+  b.title=m.t;
+  b.addEventListener('click',()=>{if(b._moved){b._moved=false;return}pop('Jalon',fr(m.d),m.t)});
+  mil.appendChild(b);
+  makeDraggable(b);
+});
 
 /* Séquences */
 const TRACKS=[[52,96,52,100],[52,96],[52],[52],[10,54,98,142]];
